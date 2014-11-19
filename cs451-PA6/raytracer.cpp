@@ -70,9 +70,8 @@ Ray RayTracer::create_a_random_ray(unsigned int x, unsigned int y)
 				 	&objY,
 				 	&objZ	);
 
-	r.o = Point3d(objX, objY, objZ);	//set as ray origin
-
-	// origin - camera position to get ray vector
+	//now set up ray origin and vector
+	r.o = Point3d(objX, objY, objZ);
 	r.v = Vector3d(r.o[0], r.o[1], r.o[2]).normalize() - 
 		  Vector3d(camera_pos[0], camera_pos[1], camera_pos[2]).normalize();
 
@@ -123,6 +122,11 @@ triangle* RayTracer::intersect(model& m, Ray r)
 bool RayTracer::intersect(model& m, triangle* t, Ray r, Point3d& x)
 {
 	//TODO: implement this
+	//first, intersect the ray with a plane
+	double t;
+	
+	//Then, check if point is inside triangle
+
 	return false;
 }
 
