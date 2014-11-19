@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="glsl" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug Win32">
+				<Option output="raytracing" prefix_auto="1" extension_auto="1" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-DGLEW_STATIC" />
+					<Add option="-DFREEGLUT_STATIC" />
+					<Add option="-D_CRT_SECURE_NO_WARNINGS" />
+					<Add option="-D_MBCS" />
+					<Add option="-DWIN32" />
+					<Add directory=".." />
+					<Add directory="../mathtool" />
+					<Add directory="../modelgraph" />
+				</Compiler>
+				<Linker>
+					<Add library="glew32sd.lib" />
+					<Add library="kernel32.lib" />
+					<Add library="user32.lib" />
+					<Add library="gdi32.lib" />
+					<Add library="winspool.lib" />
+					<Add library="comdlg32.lib" />
+					<Add library="advapi32.lib" />
+					<Add library="shell32.lib" />
+					<Add library="ole32.lib" />
+					<Add library="oleaut32.lib" />
+					<Add library="uuid.lib" />
+					<Add library="odbc32.lib" />
+					<Add library="odbccp32.lib" />
+					<Add directory="../GL" />
+				</Linker>
+			</Target>
+			<Target title="Release Win32">
+				<Option output="raytracing" prefix_auto="1" extension_auto="1" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-DGLEW_STATIC" />
+					<Add option="-DFREEGLUT_STATIC" />
+					<Add option="-D_CRT_SECURE_NO_WARNINGS" />
+					<Add option="-D_MBCS" />
+					<Add option="-DWIN32" />
+					<Add directory=".." />
+					<Add directory="../mathtool" />
+					<Add directory="../modelgraph" />
+				</Compiler>
+				<Linker>
+					<Add library="glew32s.lib" />
+					<Add library="kernel32.lib" />
+					<Add library="user32.lib" />
+					<Add library="gdi32.lib" />
+					<Add library="winspool.lib" />
+					<Add library="comdlg32.lib" />
+					<Add library="advapi32.lib" />
+					<Add library="shell32.lib" />
+					<Add library="ole32.lib" />
+					<Add library="oleaut32.lib" />
+					<Add library="uuid.lib" />
+					<Add library="odbc32.lib" />
+					<Add library="odbccp32.lib" />
+					<Add directory="../GL" />
+				</Linker>
+			</Target>
+		</Build>
+		<Unit filename="../GL/gli.cpp" />
+		<Unit filename="../GL/gli.h" />
+		<Unit filename="../GL/gliLight.h" />
+		<Unit filename="../draw.h" />
+		<Unit filename="../main.cpp" />
+		<Unit filename="../main.h" />
+		<Unit filename="../mathtool/Basic.cpp" />
+		<Unit filename="../mathtool/Basic.h" />
+		<Unit filename="../mathtool/DualQuaternion.h" />
+		<Unit filename="../mathtool/Matrix.h" />
+		<Unit filename="../mathtool/Point.h" />
+		<Unit filename="../mathtool/Quaternion.cpp" />
+		<Unit filename="../mathtool/Quaternion.h" />
+		<Unit filename="../mathtool/Vector.h" />
+		<Unit filename="../model.cpp" />
+		<Unit filename="../model.h" />
+		<Unit filename="../modelgraph/ModelEdge.cpp" />
+		<Unit filename="../modelgraph/ModelEdge.h" />
+		<Unit filename="../modelgraph/ModelGraph.cpp" />
+		<Unit filename="../modelgraph/ModelGraph.h" />
+		<Unit filename="../modelgraph/ModelNode.cpp" />
+		<Unit filename="../modelgraph/ModelNode.h" />
+		<Unit filename="../objReader.h" />
+		<Unit filename="../raytracer.cpp" />
+		<Unit filename="../raytracer.h" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

@@ -1,0 +1,33 @@
+
+#
+# Each model can be controlled with the following paramters
+#
+# "tx"    : translate in x axis 
+# "ty"    : translate in y axis
+# "tz"    : translate in z axis
+# "rx"    : rotate around x axis
+# "ry"    : rotate around y axis
+# "rz"    : rotate around z axis
+# "scale" : uniform scaling
+#
+# "cr"    : red component of diffuss color (default is 1)
+# "cg"    : green component of diffuss color (default is 1)
+# "cb"    : blue component of diffuss color (default is 1)
+# 
+# "sr"    : red component of specular color (default is 1)
+# "sg"    : green component of specular color (default is 1)
+# "sb"    : blue component of specular color (default is 1)
+# "shininess" : controls how shiny this model is (default is 128)
+#
+# "er"    : red component of emission color (default is 1)
+# "eg"    : green component of emission color (default is 1)
+# "eb"    : blue component of emission color (default is 1)
+#
+#
+
+# no empty lines below please
+model 4 # four models are defined in this RT file
+models/elephant.obj  tx=-15 tz=3 ry=4 scale=0.4  rz=-2
+models/elephant.obj  ty=-10 ry=3.14 scale=2 cg=0.25 cb=0.25
+models/octupus.obj   tx=20 ty=-15 scale=3
+models/sphere.obj    tx=20 tz=-15 cr=0.5 cg=0; cb=0.5
