@@ -18,7 +18,7 @@
 // as well as edges will be build also using model graph
 //
 
-bool model::build(const string & name)
+bool model::build(const string &name)
 {
     //if(pts!=NULL) return false; //built
 
@@ -184,9 +184,11 @@ void model::transform(const Vector3d& T, const Matrix3x3& M, double S)
 	Vector3d tmp;
 
 	//move vertices
-	for (uint i = 0; i<v_size; i++){
+	for (uint i = 0; i<v_size; i++)
+	{
 		tmp.set(vertices[i].bk_p.get());
 		vertices[i].p = M*(tmp*S)+T;
+		vertices[i].n = (M*vertices[i].n).normalize(); //we should have a back up value for this.
 	}
 
 	//move edges

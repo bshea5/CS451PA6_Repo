@@ -27,11 +27,6 @@ float R=0;       //radius
 Point3d COM;     //center of mass
 double BOX[6];   //bounding box
 
-//this is used to determine which shader is used.
-enum CS451_PA4_RENDERING_TYPE { PA4_SPOTLIGHT_RENDERING, PA4_TEXTURE_RENDERING, PA4_NORAMALMAP_RENDERING, PA4_RELIEFMAP_RENDERING };
-//this value is determined by texture filenames above. See parseArg function for detail
-CS451_PA4_RENDERING_TYPE cs451_pa4_render_type = PA4_SPOTLIGHT_RENDERING;
-
 //-----------------------------------------------------------------------------
 //read models from file
 bool readfromfile();
@@ -101,11 +96,11 @@ void computeCOM_R()
 	COM.set((box[1] + box[0]) / 2, (box[3] + box[2]) / 2, (box[5] + box[4]) / 2);
 
 	//scale the twice box first
-	box[0] = max( (box[0] - COM[0]) * 10 + COM[0], COM[0] - 30);
-	box[1] = min( (box[1] - COM[0]) * 10 + COM[0], COM[0] + 30);
-	box[3] = min( (box[3] - COM[1]) * 10 + COM[1], COM[1] + 30);
-	box[4] = max( (box[4] - COM[2]) * 10 + COM[2], COM[2] - 30);
-	box[5] = min( (box[5] - COM[2]) * 10 + COM[2], COM[2] + 30);
+	box[0] = max((box[0] - COM[0]) * 10 + COM[0], box[0] - 30);
+	box[1] = min((box[1] - COM[0]) * 10 + COM[0], box[1] + 30);
+	box[3] = min((box[3] - COM[1]) * 10 + COM[1], box[3] + 30);
+	box[4] = max((box[4] - COM[2]) * 10 + COM[2], box[4] - 30);
+	box[5] = min((box[5] - COM[2]) * 10 + COM[2], box[5] + 30);
 
 	COM.set((box[1] + box[0]) / 2, (box[3] + box[2]) / 2, (box[5] + box[4]) / 2);
 
@@ -166,7 +161,7 @@ inline void buildBoxWall(const Point3d& a, const Point3d& b, const Point3d& c, c
 	m.tris[1].v[0] = 2;
 	m.tris[1].v[1] = 3;
 	m.tris[1].v[2] = 0;
-	m.tris[0].n = n;
+	m.tris[1].n = n;
 
 	m.mat_color = color;
 	m.mat_specular = color;

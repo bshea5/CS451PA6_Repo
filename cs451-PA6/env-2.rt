@@ -1,0 +1,32 @@
+#
+# Each model can be controlled with the following paramters
+#
+# "tx"    : translate in x axis 
+# "ty"    : translate in y axis
+# "tz"    : translate in z axis
+# "rx"    : rotate around x axis
+# "ry"    : rotate around y axis
+# "rz"    : rotate around z axis
+# "scale" : uniform scaling
+#
+# "cr"    : red component of diffuss color (default is 1)
+# "cg"    : green component of diffuss color (default is 1)
+# "cb"    : blue component of diffuss color (default is 1)
+# 
+# "sr"    : red component of specular color (default is 1)
+# "sg"    : green component of specular color (default is 1)
+# "sb"    : blue component of specular color (default is 1)
+# "shininess" : controls how shiny this model is (default is 128)
+#
+# "er"    : red component of emission color (default is 1)
+# "eg"    : green component of emission color (default is 1)
+# "eb"    : blue component of emission color (default is 1)
+#
+#
+
+# no empty lines below please
+
+model 3 # four models are defined in this RT file
+models/box.obj  ry=1.75 tx=-5 scale=3 cg=1 cr=0 cb=0.5 
+models/box.obj   scale=2 cr=0.75 cg=.75; cb=0.5 tx=-15 tz=-4
+models/box.obj   scale=6 cr=0.5 cg=0; cb=0.5 tx=18 ry=0.74 tz=8

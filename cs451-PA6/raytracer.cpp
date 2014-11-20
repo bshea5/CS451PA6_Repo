@@ -1,4 +1,6 @@
 #include "raytracer.h"
+#include <algorithm>
+#include <cfloat>
 
 //some helper functions
 inline double clamp(double x){ return x<0 ? 0 : x>1 ? 1 : x; }
@@ -8,7 +10,7 @@ inline int toInt(double x){ return int( clamp(x)*255 + .5); }
 
 //constructor
 RayTracer::RayTracer(list<model>& models) : m_models(models)
-{	
+{
 	//must have window and camera set up first 
 	camera_pos = gli::getCameraPos();
 	screenWidth = glutGet(GLUT_WINDOW_WIDTH);
@@ -19,6 +21,17 @@ RayTracer::RayTracer(list<model>& models) : m_models(models)
 	glGetIntegerv(GL_VIEWPORT, viewport);
 }
 
+inline void show_progress_bar(double ratio)
+{
+	// Show the load bar.
+	static const int w = 50;
+	int   c = ratio * w;
+
+	cout << setw(3) << (int)(ratio * 100) << "% [";
+	for (int x = 0; x<c; x++) cout << "=";
+	for (int x = c; x<w; x++) cout << " ";
+	cout << "]\r" << flush;
+}
 
 //render an image with "nray_per_pixel" rays created per pixel
 void RayTracer::render(unsigned int img_w, unsigned int img_h, unsigned int nray_per_pixel)
@@ -36,17 +49,25 @@ void RayTracer::render(unsigned int img_w, unsigned int img_h, unsigned int nray
 			for (int n = 0; n < nray_per_pixel; n++)
 			{
 				Ray r=create_a_random_ray(x,y);
+
 				pair<model *, triangle *> X = intersect(r);
 
 				//determine the color of this ray 
-				Vector3d rc = raycolor(*X.first, X.second, r);
-				color = rc + color;
+				if (X.first != NULL && X.second != NULL)
+				{
+					Vector3d rc = raycolor(*X.first, X.second, r);
+					color = rc + color;
+				}
 			}
 
 			m_img[y][x] = color / nray_per_pixel;
 		}//end of x
 
+		show_progress_bar(y*1.0 / img_h);
+
 	}//end of y
+
+	cout << "\nRendering is done." << endl;
 }
 
 // render an image with "nray_per_pixel" rays created per pixel
@@ -92,48 +113,130 @@ Ray RayTracer::create_a_random_ray(unsigned int x, unsigned int y)
 
 //returns a model and triangle that intersect ray r
 //return pair<NULL,NULL> if no intersection is found
-pair<model* , triangle* > RayTracer::intersect(Ray r)
+pair<model *, triangle *> RayTracer::intersect(Ray r)
 {
+	double min_dist = FLT_MAX;
+	triangle * closest_T = NULL;
+	model * closest_M = NULL;
+
 	for (list<model>::iterator i = m_models.begin(); i != m_models.end(); i++)
 	{
-		triangle * t = intersect(*i, r);
-		if (t != NULL) return make_pair(&(*i),t);
+		triangle * t = closest_intersect(*i, r);
+		if (t != NULL)
+		{
+			Point3d x;
+			intersect(*i, t, r, x);
+			double dist = (x - r.o).normsqr();
+			if (dist < min_dist)
+			{
+				min_dist = dist;
+				closest_T = t;
+				closest_M = &*i;
+			}
+		}
 	}
-	return make_pair((model *)NULL, (triangle *)NULL);
+	return make_pair(closest_M, closest_T);
 }
 
-//returns a triangle in model m that intersects ray r
+//returns a triangle in model m that intersect ray r
 //return NULL if no intersection is found
-triangle* RayTracer::intersect(model& m, Ray r)
+triangle * RayTracer::intersect(model& m, Ray r)
 {
 	for (int i = 0; i < m.t_size; i++)
 	{
+		int static count = 0;
 		Point3d x;
 		if ( intersect(m, &m.tris[i], r, x) )
+			count++;
+			if (count == 5)
+				std::cout << "r.o: " << r.o << "\nx: " << x << std::endl;
+			//NOTE draw line here from r.o to x to visualize rays that intersect
+			glBegin(GL_LINES);
+				glColor3f(0,0.3,0.9);
+				glVertex3d(r.o[0], r.o[1], r.o[2]);
+        		glVertex3d(x[0], x[1], x[2]);
+        	glEnd();
+
 			return &m.tris[i];
 	}
 
 	return NULL;
 }
 
+//returns a triangle in model m that make closest intersection with ray r
+//return NULL if no intersection is found
+triangle * RayTracer::closest_intersect(model& m, Ray r)
+{
+	double min_dist = FLT_MAX;
+	triangle * closest_T=NULL;
+	for (int i = 0; i < m.t_size; i++)
+	{
+		Point3d x;
+		if (intersect(m, &m.tris[i], r, x))
+		{
+			double dist = (x - r.o).normsqr();
+			if (dist < min_dist)
+			{
+				closest_T = &m.tris[i];
+				min_dist = dist;
+			}
+		}//end if
+	}//end for i
+
+	return closest_T;
+}
+
 // determine if there is an intersection between triangle t and ray r
 // return true if there is an intersection and store the intersection in x
 // return false otherwise and x is undefined in this case
-bool RayTracer::intersect(model& m, triangle* t, Ray r, Point3d& x)
+bool RayTracer::intersect(model& m, triangle * t, Ray r, Point3d& x)
 {
 	//TODO: implement this
-	//first, intersect the ray with a plane
-	double t;
-	
-	//Then, check if point is inside triangle
+	Vector3d origin = Vector3d(r.o[0], r.o[1], r.o[2]);
+	Vector3d vOne, vTwo, nOne, dOne, Pv;
+	int d = 1; //magic number d
 
+	//first, intersect the ray with a plane
+	double tVar = -(origin * t->n + d) / (r.v * t->n); 
+	Point3d P = r.o + tVar * r.v;
+	Pv = Vector3d(P[0], P[1], P[2]);
+
+	//check if point is inside triangle 
+	//triangle edge one
+	vOne = m.vertices[t->v[0]].p - P;
+	vTwo = m.vertices[t->v[1]].p - P;
+	nOne = vOne % vTwo; //cross product
+	nOne.normalize();
+	dOne = -origin * nOne;
+	if ((Pv * nOne + d) < 0)
+		return false;
+
+	//triangle edge two
+	vOne = m.vertices[t->v[1]].p - P;
+	vTwo = m.vertices[t->v[2]].p - P;
+	nOne = vOne % vTwo; //cross product
+	nOne.normalize();
+	dOne = -origin * nOne;
+	if ((Pv * nOne + d) < 0)
+		return false;
+
+	//triangle edge three
+	vOne = m.vertices[t->v[1]].p - P;
+	vTwo = m.vertices[t->v[2]].p - P;
+	nOne = vOne % vTwo; //cross product
+	nOne.normalize();
+	dOne = -origin * nOne;
+	if ((Pv * nOne + d) < 0)
+		return false;
+
+	x = P;
 	return false;
 }
 
 //
 // determine the color of ray r, by analizing the intersection between t and r 
 // 
-Vector3d RayTracer::raycolor(model& m, triangle* t, const Ray& r)
+Vector3d RayTracer::raycolor(model& m, triangle * t, const Ray& r)
 {
 	Vector3d color;
 
@@ -152,6 +255,7 @@ Vector3d RayTracer::raycolor(model& m, triangle* t, const Ray& r)
 bool RayTracer::inshadow(const Point3d& p)
 {
 	//TODO: implement this
+
 	return false;
 }
 

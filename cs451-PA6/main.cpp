@@ -17,7 +17,7 @@
 //
 //
 
-int main(int argc, char ** argv)
+int main(int argc, char **argv)
 {
     //
     if(!parseArg(argc,argv)){
@@ -51,7 +51,10 @@ int main(int argc, char ** argv)
     glutKeyboardFunc(Keyboard);
 
     //set camera position
+	gli::setCameraPosX(COM[0]);
+	gli::setCameraPosY(COM[1]);
     gli::setCameraPosZ(R*2.1f);
+	Reshape(image_w, image_h);
 
 	/////////////////////////////////////////////////////////////////
 	//
@@ -67,7 +70,14 @@ int main(int argc, char ** argv)
 	cout << "- Saving image (" << imagename << ")" << endl;
 	rt.save2file(imagename);
 
+	//debug only
+	//all_rays.swap(rt.all_rays);
+	//all_intersection_points.swap(rt.intersection_points);
+	//debug only
+
     /////////////////////////////////////////////////////////////
+	gli::setCameraPosX(-COM[0]);
+	gli::setCameraPosY(COM[1]);
     gli::gliMainLoop();
 
     return 0;

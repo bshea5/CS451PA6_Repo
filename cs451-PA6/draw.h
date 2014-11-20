@@ -26,6 +26,8 @@
 #include <map>
 using namespace std;
 
+#include "raytracer.h"
+
 #include "Basic.h"
 #include "model.h"
 using namespace mathtool;
@@ -66,7 +68,8 @@ inline void DisplayModel(model& M, bool randcolor=false)
 				glNormal3dv(v.n.get());
 				glTexCoord2d(tc[0], tc[1]);
                 const Point3d& pt=v.p;
-                glVertex3d(pt[0]-O[0],pt[1]-O[1],pt[2]-O[2]);
+                //glVertex3d(pt[0]-O[0],pt[1]-O[1],pt[2]-O[2]);
+				glVertex3d(pt[0], pt[1], pt[2]);
             }
 		}
 		glEnd();
@@ -100,8 +103,8 @@ inline void DisplayModelWireFrame(model& M, bool randcolor=false)
 
                 Point3d& p1=M.vertices[e.vid[0]].p;
                 Point3d& p2=M.vertices[e.vid[1]].p;
-                glVertex3d(p1[0]-O[0],p1[1]-O[1],p1[2]-O[2]);
-                glVertex3d(p2[0]-O[0],p2[1]-O[1],p2[2]-O[2]);
+                glVertex3d(p1[0],p1[1],p1[2]);
+                glVertex3d(p2[0],p2[1],p2[2]);
             }
             glEnd();
 			glEndList();
@@ -143,6 +146,11 @@ void DisplayBackground(void)
 	glMatrixMode(GL_MODELVIEW);
 }
 
+//for debugging only
+list<Ray> all_rays;
+list<Point3d> all_intersection_points;
+//for debugging only
+
 void drawAll()
 {
     for(list<model>::iterator i=models.begin();i!=models.end();i++){
@@ -151,6 +159,20 @@ void drawAll()
     for(list<model>::iterator i=models.begin();i!=models.end();i++){
         DisplayModelWireFrame(*i);
     }
+
+	//for debugging only
+	glBegin(GL_LINES);
+	glColor3d(1, 0, 0);
+	
+	Vector3d O(COM.get());
+
+	list<Point3d>::iterator j = all_intersection_points.begin();
+	for (list<Ray>::iterator i = all_rays.begin(); i != all_rays.end(); i++, j++){
+		glVertex3dv((i->o).get());
+		//glVertex3dv((i->o+i->v*1000).get());
+		glVertex3dv((*j).get());
+	}
+	glEnd();
 }
 
 //-----------------------------------------------------------------------------
@@ -169,9 +191,9 @@ void setupLight()
 	//Let's have light!
 	//place the light at the upper right corner on the back
 	//
-	light0_position[0] = BOX[1] - 0.1;
-	light0_position[1] = BOX[3] - 0.1;
-	light0_position[2] = BOX[4] - 0.1;
+	light0_position[0] = COM[0]+R/3;
+	light0_position[1] = COM[1]+R/3;
+	light0_position[2] = BOX[5] - 0.1;
 
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, light0_diffuse);
 	glLightfv(GL_LIGHT0, GL_AMBIENT, light0_ambient);

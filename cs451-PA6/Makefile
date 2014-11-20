@@ -34,7 +34,7 @@ endif
 g++ = g++
 CXX = g++
 
-OPTS = -pipe -O3 -MMD -Wno-write-strings  -Wno-unused-result -Wno-deprecated
+OPTS = -std=c++11 -pipe -O3 -MMD -Wno-write-strings  -Wno-unused-result -Wno-deprecated
 
 #-------------------------------------------------------------------
 # Base parameters for INCLUDE and LIB.
@@ -80,7 +80,7 @@ INCLUDE    +=   $(addprefix -I,$(DIRS))
 CFLAGS     = $(OPTS) $(INCLUDE) 
 CXXFLAGS   = $(CFLAGS)
 
-TARGET = reliefmap
+TARGET = raytracer 
 
 all: $(TARGET)
 

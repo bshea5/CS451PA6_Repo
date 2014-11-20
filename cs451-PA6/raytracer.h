@@ -1,7 +1,8 @@
 #pragma once
+
+#include "GL/gli.h"
 #include "model.h"
 #include <list>
-#include "GL/gli.h"
 
 struct Ray
 {
@@ -30,11 +31,15 @@ private:
 
 	//returns a model and triangle that intersect ray r
 	//return pair<NULL,NULL> if no intersection is found
-	pair<model* ,triangle *> intersect(Ray r);
+	pair<model * ,triangle *> intersect(Ray r);
 
 	//returns a triangle in model m that intersect ray r
 	//return NULL if no intersection is found
-	triangle* intersect(model& m, Ray r);
+	triangle * intersect(model& m, Ray r);
+
+	//returns a triangle in model m that make closest intersection with ray r
+	//return NULL if no intersection is found
+	triangle * closest_intersect(model& m, Ray r);
 
 	// determine if there is an intersection between triangle t and ray r
 	// return true if there is an intersection and store the intersection in x
@@ -60,5 +65,11 @@ private:
 	GLdouble modelMatrix[16];
 	GLdouble projMatrix[16];
 	GLint viewport[4];
+
+public:
+
+	//for debugging only
+	list<Ray> all_rays;
+	list<Point3d> intersection_points;
 };
 

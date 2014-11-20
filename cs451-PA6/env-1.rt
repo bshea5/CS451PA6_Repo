@@ -1,4 +1,3 @@
-
 #
 # Each model can be controlled with the following paramters
 #
@@ -26,8 +25,8 @@
 #
 
 # no empty lines below please
-model 4 # four models are defined in this RT file
-models/elephant.obj  tx=-15 tz=3 ry=4 scale=0.4  rz=-2
-models/elephant.obj  ty=-10 ry=3.14 scale=2 cg=0.25 cb=0.25
-models/octupus.obj   tx=20 ty=-15 scale=3
-models/sphere.obj    tx=20 tz=-15 cr=0.5 cg=0; cb=0.5
+
+model 3 # four models are defined in this RT file
+models/elephant.obj  ty=-10 ry=3.14 scale=1.25 cg=1 cr=0 cb=0.5 
+models/sphere.obj   cr=0.5 cg=0; cb=0.5 tx=-15
+models/sphere.obj   cr=0.5 cg=0; cb=0.5 tx=15
