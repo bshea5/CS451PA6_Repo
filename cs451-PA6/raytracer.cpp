@@ -7,6 +7,8 @@ inline double clamp(double x){ return x<0 ? 0 : x>1 ? 1 : x; }
 
 inline int toInt(double x){ return int( clamp(x)*255 + .5); }
 
+//global variable vector, i hate myself
+// std::vector<Vector3d> lines;
 
 //constructor
 RayTracer::RayTracer(list<model>& models) : m_models(models)
@@ -75,45 +77,55 @@ void RayTracer::render(unsigned int img_w, unsigned int img_h, unsigned int nray
 Ray RayTracer::create_a_random_ray(unsigned int x, unsigned int y)
 {
 	Ray r;
-	Vector3d D;	//distance from camera to origin of the ray on the near plane
+	Vector3d near, far;
 
+	GLdouble pixelWidth = viewport[2] / m_img.front().size();
+	GLdouble pixelHeight = viewport[3] / m_img.size(); 
 	GLdouble winX = x + (GLdouble)(rand() % 10) / 10.0; //get random decimal value [0,1] for offset
 	GLdouble winY = y + (GLdouble)(rand() % 10) / 10.0;
-	GLdouble objX, objY, objZ;
+	winX *= pixelWidth;
+	winY *= pixelHeight;
 
+	//get near
 	gluUnProject(	winX,
 					winY,
 				 	0,				//get the near plane
 				 	modelMatrix,	//model
 				 	projMatrix, 	//projection
 				 	viewport,		//viewport
-				 	&objX,
-				 	&objY,
-				 	&objZ	);
+				 	&near[0],
+				 	&near[1],
+				 	&near[2]	);
 
-	//now set up ray origin and vector
-	r.o = Point3d(objX, objY, objZ);
-	r.v = Vector3d(r.o[0], r.o[1], r.o[2]).normalize() - 
-		  Vector3d(camera_pos[0], camera_pos[1], camera_pos[2]).normalize();
+	//get far
+	gluUnProject(	winX,
+					winY,
+				 	1,				//get the far plane
+				 	modelMatrix,	
+				 	projMatrix, 	
+				 	viewport,		
+				 	&far[0],
+				 	&far[1],
+				 	&far[2]		);
 
-		  //check if rays are generating
-	// int static count = 0;
-	// count++;
-	// if (count > 462300)
-	// 	std::cout << "ray vector: " << r.v << std::endl;
-	// if ( cound % 1000 == 0)
-	//	draw line
+	//ray vector
+	//far - near
+	r.v = (far - near).normalize();
 
-	//TODO: implement this
-	//hint: see slides on generating rays for perspective views
-	// (x / number of pixels) * screenWidth + random[0,1]
+	//ray origin
+	//add camera position to origin
+	r.o = Point3d(	camera_pos[0] + near[0], 
+					camera_pos[1] + near[1], 
+					camera_pos[2] + near[2]	);
 
+
+	all_rays.push_back(r);
 	return r;
 }
 
 //returns a model and triangle that intersect ray r
 //return pair<NULL,NULL> if no intersection is found
-pair<model *, triangle *> RayTracer::intersect(Ray r)
+pair<model*, triangle*> RayTracer::intersect(Ray r)
 {
 	double min_dist = FLT_MAX;
 	triangle * closest_T = NULL;
@@ -140,32 +152,22 @@ pair<model *, triangle *> RayTracer::intersect(Ray r)
 
 //returns a triangle in model m that intersect ray r
 //return NULL if no intersection is found
-triangle * RayTracer::intersect(model& m, Ray r)
+triangle* RayTracer::intersect(model& m, Ray r)
 {
 	for (int i = 0; i < m.t_size; i++)
 	{
-		int static count = 0;
 		Point3d x;
 		if ( intersect(m, &m.tris[i], r, x) )
-			count++;
-			if (count == 5)
-				std::cout << "r.o: " << r.o << "\nx: " << x << std::endl;
-			//NOTE draw line here from r.o to x to visualize rays that intersect
-			glBegin(GL_LINES);
-				glColor3f(0,0.3,0.9);
-				glVertex3d(r.o[0], r.o[1], r.o[2]);
-        		glVertex3d(x[0], x[1], x[2]);
-        	glEnd();
-
+		{
 			return &m.tris[i];
+		}
 	}
-
 	return NULL;
 }
 
 //returns a triangle in model m that make closest intersection with ray r
 //return NULL if no intersection is found
-triangle * RayTracer::closest_intersect(model& m, Ray r)
+triangle* RayTracer::closest_intersect(model& m, Ray r)
 {
 	double min_dist = FLT_MAX;
 	triangle * closest_T=NULL;
@@ -229,8 +231,10 @@ bool RayTracer::intersect(model& m, triangle * t, Ray r, Point3d& x)
 	if ((Pv * nOne + d) < 0)
 		return false;
 
+	intersection_points.push_back(x);
+
 	x = P;
-	return false;
+	return true;
 }
 
 //
@@ -244,11 +248,15 @@ Vector3d RayTracer::raycolor(model& m, triangle * t, const Ray& r)
 
 	//
 	//hint: (1) what is the normal direction at the intersection between t and r
+	// nx = w1n1 + w2n2 + w3n3, where the w's are barycentric coords
 	//      (2) what is the color of this triangle? 
 	//      (3) where is the light?
 	//      (4) is the intersection in shadow? (call inshadow(const Point3d& p))
 
-	return color;
+	Vector3d tri_color = m.mat_color;
+
+	//return color;
+	return tri_color;
 }
 
 //check if a point p is in shadow
@@ -262,7 +270,7 @@ bool RayTracer::inshadow(const Point3d& p)
 //save rendered image to file
 bool RayTracer::save2file(const string& filename)
 {
-	FILE *f = fopen(filename.c_str(), "w");         // Write image to PPM file.
+	FILE* f = fopen(filename.c_str(), "w");         // Write image to PPM file.
 
 	int h = m_img.size();
 	if (h == 0) return true; //nothing to save...

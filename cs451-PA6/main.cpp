@@ -64,15 +64,16 @@ int main(int argc, char **argv)
 
 	unsigned int n_ray = 1;
 	RayTracer rt(models);
-	rt.render(image_w, image_h, n_ray);
+	//rt.render(image_w, image_h, n_ray);
+	rt.render(10, 10, n_ray);
 	string imagename = "CS451_PA6_Ray_Casting";
 	imagename = imagename +"_"+ to_string(time(NULL)) + "_.ppm";
 	cout << "- Saving image (" << imagename << ")" << endl;
 	rt.save2file(imagename);
 
 	//debug only
-	//all_rays.swap(rt.all_rays);
-	//all_intersection_points.swap(rt.intersection_points);
+	all_rays.swap(rt.all_rays);
+	all_intersection_points.swap(rt.intersection_points);
 	//debug only
 
     /////////////////////////////////////////////////////////////

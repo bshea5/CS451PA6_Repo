@@ -169,8 +169,8 @@ void drawAll()
 	list<Point3d>::iterator j = all_intersection_points.begin();
 	for (list<Ray>::iterator i = all_rays.begin(); i != all_rays.end(); i++, j++){
 		glVertex3dv((i->o).get());
-		//glVertex3dv((i->o+i->v*1000).get());
-		glVertex3dv((*j).get());
+		glVertex3dv((i->o+i->v*1000).get());
+		//glVertex3dv((*j).get());
 	}
 	glEnd();
 }
