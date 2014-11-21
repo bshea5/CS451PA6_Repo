@@ -140,3 +140,126 @@ raytracer.o: raytracer.cpp raytracer.h GL/gli.h model.h mathtool/Point.h \
 raytracer.o: raytracer.cpp raytracer.h GL/gli.h model.h mathtool/Point.h \
   mathtool/Vector.h mathtool/Basic.h mathtool/Matrix.h \
   mathtool/Quaternion.h objReader.h
+raytracer.o: raytracer.cpp raytracer.h GL/gli.h model.h mathtool/Point.h \
+  mathtool/Vector.h mathtool/Basic.h mathtool/Matrix.h \
+  mathtool/Quaternion.h objReader.h
+raytracer.o: raytracer.cpp raytracer.h GL/gli.h model.h mathtool/Point.h \
+  mathtool/Vector.h mathtool/Basic.h mathtool/Matrix.h \
+  mathtool/Quaternion.h objReader.h
+main.o: main.cpp main.h objReader.h mathtool/Point.h mathtool/Vector.h \
+  mathtool/Basic.h mathtool/Quaternion.h mathtool/Matrix.h model.h \
+  draw.h GL/gli.h GL/gliLight.h raytracer.h
+main.o: main.cpp main.h objReader.h mathtool/Point.h mathtool/Vector.h \
+  mathtool/Basic.h mathtool/Quaternion.h mathtool/Matrix.h model.h \
+  draw.h GL/gli.h GL/gliLight.h raytracer.h
+main.o: main.cpp main.h objReader.h mathtool/Point.h mathtool/Vector.h \
+  mathtool/Basic.h mathtool/Quaternion.h mathtool/Matrix.h model.h \
+  draw.h GL/gli.h GL/gliLight.h raytracer.h
+main.o: main.cpp main.h objReader.h mathtool/Point.h mathtool/Vector.h \
+  mathtool/Basic.h mathtool/Quaternion.h mathtool/Matrix.h model.h \
+  draw.h GL/gli.h GL/gliLight.h raytracer.h
+main.o: main.cpp main.h objReader.h mathtool/Point.h mathtool/Vector.h \
+  mathtool/Basic.h mathtool/Quaternion.h mathtool/Matrix.h model.h \
+  draw.h GL/gli.h GL/gliLight.h raytracer.h
+main.o: main.cpp main.h objReader.h mathtool/Point.h mathtool/Vector.h \
+  mathtool/Basic.h mathtool/Quaternion.h mathtool/Matrix.h model.h \
+  draw.h GL/gli.h GL/gliLight.h raytracer.h
+raytracer.o: raytracer.cpp raytracer.h GL/gli.h model.h mathtool/Point.h \
+  mathtool/Vector.h mathtool/Basic.h mathtool/Matrix.h \
+  mathtool/Quaternion.h objReader.h
+raytracer.o: raytracer.cpp raytracer.h GL/gli.h model.h mathtool/Point.h \
+  mathtool/Vector.h mathtool/Basic.h mathtool/Matrix.h \
+  mathtool/Quaternion.h objReader.h
+raytracer.o: raytracer.cpp raytracer.h GL/gli.h model.h mathtool/Point.h \
+  mathtool/Vector.h mathtool/Basic.h mathtool/Matrix.h \
+  mathtool/Quaternion.h objReader.h
+raytracer.o: raytracer.cpp raytracer.h GL/gli.h model.h mathtool/Point.h \
+  mathtool/Vector.h mathtool/Basic.h mathtool/Matrix.h \
+  mathtool/Quaternion.h objReader.h
+raytracer.o: raytracer.cpp raytracer.h GL/gli.h model.h mathtool/Point.h \
+  mathtool/Vector.h mathtool/Basic.h mathtool/Matrix.h \
+  mathtool/Quaternion.h objReader.h
+raytracer.o: raytracer.cpp raytracer.h GL/gli.h model.h mathtool/Point.h \
+  mathtool/Vector.h mathtool/Basic.h mathtool/Matrix.h \
+  mathtool/Quaternion.h objReader.h
+main.o: main.cpp main.h objReader.h mathtool/Point.h mathtool/Vector.h \
+  mathtool/Basic.h mathtool/Quaternion.h mathtool/Matrix.h model.h \
+  draw.h GL/gli.h GL/gliLight.h raytracer.h
+raytracer.o: raytracer.cpp raytracer.h GL/gli.h model.h mathtool/Point.h \
+  mathtool/Vector.h mathtool/Basic.h mathtool/Matrix.h \
+  mathtool/Quaternion.h objReader.h
+main.o: main.cpp main.h objReader.h mathtool/Point.h mathtool/Vector.h \
+  mathtool/Basic.h mathtool/Quaternion.h mathtool/Matrix.h model.h \
+  draw.h GL/gli.h GL/gliLight.h raytracer.h
+main.o: main.cpp main.h objReader.h mathtool/Point.h mathtool/Vector.h \
+  mathtool/Basic.h mathtool/Quaternion.h mathtool/Matrix.h model.h \
+  draw.h GL/gli.h GL/gliLight.h raytracer.h
+main.o: main.cpp main.h objReader.h mathtool/Point.h mathtool/Vector.h \
+  mathtool/Basic.h mathtool/Quaternion.h mathtool/Matrix.h model.h \
+  draw.h GL/gli.h GL/gliLight.h raytracer.h
+main.o: main.cpp main.h objReader.h mathtool/Point.h mathtool/Vector.h \
+  mathtool/Basic.h mathtool/Quaternion.h mathtool/Matrix.h model.h \
+  draw.h GL/gli.h GL/gliLight.h raytracer.h
+raytracer.o: raytracer.cpp raytracer.h GL/gli.h model.h mathtool/Point.h \
+  mathtool/Vector.h mathtool/Basic.h mathtool/Matrix.h \
+  mathtool/Quaternion.h objReader.h
+raytracer.o: raytracer.cpp raytracer.h GL/gli.h model.h mathtool/Point.h \
+  mathtool/Vector.h mathtool/Basic.h mathtool/Matrix.h \
+  mathtool/Quaternion.h objReader.h
+raytracer.o: raytracer.cpp raytracer.h GL/gli.h model.h mathtool/Point.h \
+  mathtool/Vector.h mathtool/Basic.h mathtool/Matrix.h \
+  mathtool/Quaternion.h objReader.h
+raytracer.o: raytracer.cpp raytracer.h GL/gli.h model.h mathtool/Point.h \
+  mathtool/Vector.h mathtool/Basic.h mathtool/Matrix.h \
+  mathtool/Quaternion.h objReader.h
+raytracer.o: raytracer.cpp raytracer.h GL/gli.h model.h mathtool/Point.h \
+  mathtool/Vector.h mathtool/Basic.h mathtool/Matrix.h \
+  mathtool/Quaternion.h objReader.h
+main.o: main.cpp main.h objReader.h mathtool/Point.h mathtool/Vector.h \
+  mathtool/Basic.h mathtool/Quaternion.h mathtool/Matrix.h model.h \
+  draw.h GL/gli.h GL/gliLight.h raytracer.h
+main.o: main.cpp main.h objReader.h mathtool/Point.h mathtool/Vector.h \
+  mathtool/Basic.h mathtool/Quaternion.h mathtool/Matrix.h model.h \
+  draw.h GL/gli.h GL/gliLight.h raytracer.h
+raytracer.o: raytracer.cpp raytracer.h GL/gli.h model.h mathtool/Point.h \
+  mathtool/Vector.h mathtool/Basic.h mathtool/Matrix.h \
+  mathtool/Quaternion.h objReader.h
+main.o: main.cpp main.h objReader.h mathtool/Point.h mathtool/Vector.h \
+  mathtool/Basic.h mathtool/Quaternion.h mathtool/Matrix.h model.h \
+  draw.h GL/gli.h GL/gliLight.h raytracer.h
+main.o: main.cpp main.h objReader.h mathtool/Point.h mathtool/Vector.h \
+  mathtool/Basic.h mathtool/Quaternion.h mathtool/Matrix.h model.h \
+  draw.h GL/gli.h GL/gliLight.h raytracer.h
+raytracer.o: raytracer.cpp raytracer.h GL/gli.h model.h mathtool/Point.h \
+  mathtool/Vector.h mathtool/Basic.h mathtool/Matrix.h \
+  mathtool/Quaternion.h objReader.h
+raytracer.o: raytracer.cpp raytracer.h GL/gli.h model.h mathtool/Point.h \
+  mathtool/Vector.h mathtool/Basic.h mathtool/Matrix.h \
+  mathtool/Quaternion.h objReader.h
+raytracer.o: raytracer.cpp raytracer.h GL/gli.h model.h mathtool/Point.h \
+  mathtool/Vector.h mathtool/Basic.h mathtool/Matrix.h \
+  mathtool/Quaternion.h objReader.h
+raytracer.o: raytracer.cpp raytracer.h GL/gli.h model.h mathtool/Point.h \
+  mathtool/Vector.h mathtool/Basic.h mathtool/Matrix.h \
+  mathtool/Quaternion.h objReader.h
+raytracer.o: raytracer.cpp raytracer.h GL/gli.h model.h mathtool/Point.h \
+  mathtool/Vector.h mathtool/Basic.h mathtool/Matrix.h \
+  mathtool/Quaternion.h objReader.h
+raytracer.o: raytracer.cpp raytracer.h GL/gli.h model.h mathtool/Point.h \
+  mathtool/Vector.h mathtool/Basic.h mathtool/Matrix.h \
+  mathtool/Quaternion.h objReader.h
+main.o: main.cpp main.h objReader.h mathtool/Point.h mathtool/Vector.h \
+  mathtool/Basic.h mathtool/Quaternion.h mathtool/Matrix.h model.h \
+  draw.h GL/gli.h GL/gliLight.h raytracer.h
+main.o: main.cpp main.h objReader.h mathtool/Point.h mathtool/Vector.h \
+  mathtool/Basic.h mathtool/Quaternion.h mathtool/Matrix.h model.h \
+  draw.h GL/gli.h GL/gliLight.h raytracer.h
+main.o: main.cpp main.h objReader.h mathtool/Point.h mathtool/Vector.h \
+  mathtool/Basic.h mathtool/Quaternion.h mathtool/Matrix.h model.h \
+  draw.h GL/gli.h GL/gliLight.h raytracer.h
+raytracer.o: raytracer.cpp raytracer.h GL/gli.h model.h mathtool/Point.h \
+  mathtool/Vector.h mathtool/Basic.h mathtool/Matrix.h \
+  mathtool/Quaternion.h objReader.h
+main.o: main.cpp main.h objReader.h mathtool/Point.h mathtool/Vector.h \
+  mathtool/Basic.h mathtool/Quaternion.h mathtool/Matrix.h model.h \
+  draw.h GL/gli.h GL/gliLight.h raytracer.h

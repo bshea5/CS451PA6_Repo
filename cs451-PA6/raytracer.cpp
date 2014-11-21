@@ -118,7 +118,6 @@ Ray RayTracer::create_a_random_ray(unsigned int x, unsigned int y)
 					camera_pos[1] + near[1], 
 					camera_pos[2] + near[2]	);
 
-
 	all_rays.push_back(r);
 	return r;
 }
@@ -191,58 +190,79 @@ triangle* RayTracer::closest_intersect(model& m, Ray r)
 // determine if there is an intersection between triangle t and ray r
 // return true if there is an intersection and store the intersection in x
 // return false otherwise and x is undefined in this case
-bool RayTracer::intersect(model& m, triangle * t, Ray r, Point3d& x)
+bool RayTracer::intersect(model& m, triangle* tri, Ray r, Point3d& x)
 {
-	//TODO: implement this
-	Vector3d origin = Vector3d(r.o[0], r.o[1], r.o[2]);
-	Vector3d vOne, vTwo, nOne, dOne, Pv;
-	int d = 1; //magic number d
+	//TODO:Implement me!
+	Vector3d e1, e2, h, s, q;
+	Vector3d v0, v1, v2;	
+	double a, f;
+	double t, u, v;	//B
 
-	//first, intersect the ray with a plane
-	double tVar = -(origin * t->n + d) / (r.v * t->n); 
-	Point3d P = r.o + tVar * r.v;
-	Pv = Vector3d(P[0], P[1], P[2]);
+	//triangle vertices, save points as vectors for easy calculations
+	v0 = Vector3d(m.vertices[tri->v[0]].p[0],m.vertices[tri->v[0]].p[1],m.vertices[tri->v[0]].p[2]);
+	v1 = Vector3d(m.vertices[tri->v[1]].p[0],m.vertices[tri->v[1]].p[1],m.vertices[tri->v[1]].p[2]);
+	v2 = Vector3d(m.vertices[tri->v[2]].p[0],m.vertices[tri->v[2]].p[1],m.vertices[tri->v[2]].p[2]);
 
-	//check if point is inside triangle 
-	//triangle edge one
-	vOne = m.vertices[t->v[0]].p - P;
-	vTwo = m.vertices[t->v[1]].p - P;
-	nOne = vOne % vTwo; //cross product
-	nOne.normalize();
-	dOne = -origin * nOne;
-	if ((Pv * nOne + d) < 0)
-		return false;
+	e1 = v1 - v0;
+	e2 = v2 - v0;
 
-	//triangle edge two
-	vOne = m.vertices[t->v[1]].p - P;
-	vTwo = m.vertices[t->v[2]].p - P;
-	nOne = vOne % vTwo; //cross product
-	nOne.normalize();
-	dOne = -origin * nOne;
-	if ((Pv * nOne + d) < 0)
-		return false;
+	h = r.v % e2;	//cross product
+	a = e1 * h;		//dot product
 
-	//triangle edge three
-	vOne = m.vertices[t->v[1]].p - P;
-	vTwo = m.vertices[t->v[2]].p - P;
-	nOne = vOne % vTwo; //cross product
-	nOne.normalize();
-	dOne = -origin * nOne;
-	if ((Pv * nOne + d) < 0)
-		return false;
+	if (a > -0.00001 && a < 0.00001)
+		return(false);
 
-	intersection_points.push_back(x);
+	f = 1/a;
+	s = r.o - v0;		//distance from vertex0 to ray origin
+	u = f * (s * h);
 
-	x = P;
-	return true;
+	if (u < 0.0 || u > 1.0)
+		return(false);
+
+	q = s % e1;
+	v = f * (r.v * q);
+
+	if (v < 0.0 || u + v > 1.0)
+		return(false);
+
+	// at this stage we can compute t to find out where
+	// the intersection point is on the line
+	t = f * (e2 * q);
+
+	if (t > 0.00001) // ray intersection
+	{	
+		x = r.o + (r.v * t);	//get point of intersection
+		intersection_points.push_back(x);
+		return(true);
+	}
+
+	else // this means that there is a line intersection
+		 // but not a ray intersection
+		 return (false);
 }
 
 //
 // determine the color of ray r, by analizing the intersection between t and r 
 // 
-Vector3d RayTracer::raycolor(model& m, triangle * t, const Ray& r)
+Vector3d RayTracer::raycolor(model& m, triangle* tri, const Ray& r)
 {
-	Vector3d color;
+	Vector3d color; 			//color of point to return
+	Vector3d a, b, c;			//triangle points
+	Vector3d v0, v1, v2;
+	Vector3d nx, na, nb, nc;	//normal directions
+	Vector3d light_position;	//
+	double u, v, w; 			//Barycentric coords
+	double scalar;
+
+	//triangle points in vector form
+	a = Vector3d(m.vertices[tri->v[0]].p[0],m.vertices[tri->v[0]].p[1],m.vertices[tri->v[0]].p[2]);
+	b = Vector3d(m.vertices[tri->v[1]].p[0],m.vertices[tri->v[1]].p[1],m.vertices[tri->v[1]].p[2]);
+	c = Vector3d(m.vertices[tri->v[2]].p[0],m.vertices[tri->v[2]].p[1],m.vertices[tri->v[2]].p[2]);
+
+	//normal directions for each point in the triangle
+	na = m.vertices[tri->v[0]].n;
+	nb = m.vertices[tri->v[1]].n;
+	nc = m.vertices[tri->v[2]].n;
 
 	//TODO: implement this
 
@@ -252,11 +272,37 @@ Vector3d RayTracer::raycolor(model& m, triangle * t, const Ray& r)
 	//      (2) what is the color of this triangle? 
 	//      (3) where is the light?
 	//      (4) is the intersection in shadow? (call inshadow(const Point3d& p))
+	//(1)
+	v0 = b - a; 
+	v1 = c - a; 
+	v2 = r.o - a;
+    double d00 = v0 * v0;
+    double d01 = v0 * v1;
+    double d11 = v1 * v1;
+    double d20 = v2 * v0;
+    double d21 = v2 * v1;
+    double denom = d00 * d11 - d01 * d01;
 
-	Vector3d tri_color = m.mat_color;
+    //assign Barycentric coords
+    v = (d11 * d20 - d01 * d21) / denom;
+    w = (d00 * d21 - d01 * d20) / denom;
+    u = 1.0f - v - w;
 
-	//return color;
-	return tri_color;
+    //get normal direction of point using Barycentric coords
+    nx = v * na + w * nb + u * nc;
+
+    //dot product of light and normal 
+    // \  |
+    //  \ |
+    //	 \|
+    // -----------
+    // light_position = Vector3d(	gliLight.light0_position[0], 
+    // 							gliLight.light0_position[1], 
+    // 							gliLight.light0_position[2]	);
+    //scalar = nx * 
+
+	return color;
+	//return m.mat_color;
 }
 
 //check if a point p is in shadow
