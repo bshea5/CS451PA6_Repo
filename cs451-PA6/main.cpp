@@ -65,7 +65,7 @@ int main(int argc, char **argv)
 	unsigned int n_ray = 1;
 	RayTracer rt(models);
 	//rt.render(image_w, image_h, n_ray);
-	rt.render(50, 50, n_ray);
+	rt.render(680, 680, n_ray);
 	string imagename = "CS451_PA6_Ray_Casting";
 	imagename = imagename +"_"+ to_string(time(NULL)) + "_.ppm";
 	cout << "- Saving image (" << imagename << ")" << endl;
@@ -79,7 +79,7 @@ int main(int argc, char **argv)
     /////////////////////////////////////////////////////////////
 	gli::setCameraPosX(-COM[0]);
 	gli::setCameraPosY(COM[1]);
-    gli::gliMainLoop();
+    //gli::gliMainLoop();
 
     return 0;
 }

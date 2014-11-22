@@ -77,7 +77,7 @@ void RayTracer::render(unsigned int img_w, unsigned int img_h, unsigned int nray
 Ray RayTracer::create_a_random_ray(unsigned int x, unsigned int y)
 {
 	Ray r;
-	Vector3d near, far;
+	Vector3d n, f;	//near and far plane
 
 	GLdouble pixelWidth = viewport[2] / m_img.front().size();
 	GLdouble pixelHeight = viewport[3] / m_img.size(); 
@@ -93,9 +93,9 @@ Ray RayTracer::create_a_random_ray(unsigned int x, unsigned int y)
 				 	modelMatrix,	//model
 				 	projMatrix, 	//projection
 				 	viewport,		//viewport
-				 	&near[0],
-				 	&near[1],
-				 	&near[2]	);
+				 	&n[0],
+				 	&n[1],
+				 	&n[2]	);
 
 	//get far
 	gluUnProject(	winX,
@@ -104,19 +104,19 @@ Ray RayTracer::create_a_random_ray(unsigned int x, unsigned int y)
 				 	modelMatrix,	
 				 	projMatrix, 	
 				 	viewport,		
-				 	&far[0],
-				 	&far[1],
-				 	&far[2]		);
+				 	&f[0],
+				 	&f[1],
+				 	&f[2]		);
 
 	//ray vector
 	//far - near
-	r.v = (far - near).normalize();
+	r.v = (f - n).normalize();
 
 	//ray origin
 	//add camera position to origin
-	r.o = Point3d(	camera_pos[0] + near[0], 
-					camera_pos[1] + near[1], 
-					camera_pos[2] + near[2]	);
+	r.o = Point3d(	camera_pos[0] + n[0], 
+					camera_pos[1] + n[1], 
+					camera_pos[2] + n[2]	);
 
 	all_rays.push_back(r);
 	return r;
@@ -192,7 +192,6 @@ triangle* RayTracer::closest_intersect(model& m, Ray r)
 // return false otherwise and x is undefined in this case
 bool RayTracer::intersect(model& m, triangle* tri, Ray r, Point3d& x)
 {
-	//TODO:Implement me!
 	Vector3d e1, e2, h, s, q;
 	Vector3d v0, v1, v2;	
 	double a, f;
@@ -250,9 +249,11 @@ Vector3d RayTracer::raycolor(model& m, triangle* tri, const Ray& r)
 	Vector3d a, b, c;			//triangle points
 	Vector3d v0, v1, v2;
 	Vector3d nx, na, nb, nc;	//normal directions
-	Vector3d light_position;	//
+	Vector3d light_position, light_direction;
+	Vector3d ambient, diffuse, specular; //lights
 	double u, v, w; 			//Barycentric coords
-	double scalar;
+	double nDotL;				//dot product light direction and normal
+	double shade;
 
 	//triangle points in vector form
 	a = Vector3d(m.vertices[tri->v[0]].p[0],m.vertices[tri->v[0]].p[1],m.vertices[tri->v[0]].p[2]);
@@ -272,7 +273,7 @@ Vector3d RayTracer::raycolor(model& m, triangle* tri, const Ray& r)
 	//      (2) what is the color of this triangle? 
 	//      (3) where is the light?
 	//      (4) is the intersection in shadow? (call inshadow(const Point3d& p))
-	//(1)
+	//(1) get normal direction at intersection
 	v0 = b - a; 
 	v1 = c - a; 
 	v2 = r.o - a;
@@ -291,15 +292,31 @@ Vector3d RayTracer::raycolor(model& m, triangle* tri, const Ray& r)
     //get normal direction of point using Barycentric coords
     nx = v * na + w * nb + u * nc;
 
+	//(2) get the color of mode, lights will modify this value
+	color = m.mat_color;
+
     //dot product of light and normal 
     // \  |
-    //  \ |
+    //  \ | 
     //	 \|
     // -----------
-    // light_position = Vector3d(	gliLight.light0_position[0], 
-    // 							gliLight.light0_position[1], 
-    // 							gliLight.light0_position[2]	);
-    //scalar = nx * 
+	//(3) get light position and light vals
+    light_position = Vector3d(	light0_position[0], 
+     							light0_position[1], 
+     							light0_position[2]	);
+
+	//light_direction = (pointB - light_position).normalized
+	shade = light_direction * nx;
+	if (shade < 0)
+		shade = 0;
+	
+	ambient = Vector3d(	light0_ambient[0],	light0_ambient[1],	light0_ambient[2]);
+	diffuse = Vector3d(	light0_diffuse[0],	light0_diffuse[1],	light0_diffuse[2]);
+	specular = Vector3d(light0_specular[0], light0_specular[1], light0_specular[2]);
+
+	color = color * (ambient + diffuse * shade);
+
+	//color = color + ambient + diffuse + specular;
 
 	return color;
 	//return m.mat_color;

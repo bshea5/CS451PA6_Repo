@@ -87,7 +87,7 @@ struct model
 
 		for (int i = 0; i < 3; i++)
 		{
-			mat_color[i]=1;
+			mat_color[i] = 1;
 			mat_specular[i] = 1;
 			mat_emission[i] = 1;
 		}

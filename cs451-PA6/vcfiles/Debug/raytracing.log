@@ -1,0 +1,82 @@
+﻿Build started 11/21/2014 5:08:43 PM.
+     1>Project "C:\Users\Brandon\Documents\Visual Studio 2013\Projects\CS451PA6_Repo\cs451-PA6\vcfiles\raytracing.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I.. /I../mathtool /I../modelgraph /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D GLEW_STATIC /D FREEGLUT_STATIC /D _CRT_SECURE_NO_WARNINGS /D _MBCS /D WIN32 /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt ..\GL\gli.cpp ..\main.cpp ..\mathtool\Basic.cpp ..\mathtool\Quaternion.cpp ..\model.cpp ..\modelgraph\ModelEdge.cpp ..\modelgraph\ModelGraph.cpp ..\modelgraph\ModelNode.cpp ..\raytracer.cpp
+         raytracer.cpp
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\raytracer.cpp(30): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\raytracer.cpp(45): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\raytracer.cpp(48): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\raytracer.cpp(51): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\raytracer.cpp(80): error C2143: syntax error : missing ';' before ','
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\raytracer.cpp(96): error C2143: syntax error : missing ']' before 'constant'
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\raytracer.cpp(96): error C2059: syntax error : ']'
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\raytracer.cpp(98): error C2059: syntax error : ')'
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\raytracer.cpp(96): error C2059: syntax error : 'constant'
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\raytracer.cpp(101): error C3493: 'winX' cannot be implicitly captured because no default capture mode has been specified
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\raytracer.cpp(102): error C3493: 'winY' cannot be implicitly captured because no default capture mode has been specified
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\raytracer.cpp(104): warning C4573: the usage of 'RayTracer::modelMatrix' requires the compiler to capture 'this' but the current default capture mode does not allow it
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\raytracer.cpp(105): warning C4573: the usage of 'RayTracer::projMatrix' requires the compiler to capture 'this' but the current default capture mode does not allow it
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\raytracer.cpp(106): warning C4573: the usage of 'RayTracer::viewport' requires the compiler to capture 'this' but the current default capture mode does not allow it
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\raytracer.cpp(107): error C2143: syntax error : missing ']' before 'constant'
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\raytracer.cpp(107): error C2059: syntax error : ']'
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\raytracer.cpp(107): error C2059: syntax error : ')'
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\raytracer.cpp(107): error C2059: syntax error : 'constant'
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\raytracer.cpp(109): error C2059: syntax error : ')'
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\raytracer.cpp(113): error C3493: 'r' cannot be implicitly captured because no default capture mode has been specified
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\raytracer.cpp(113): error C2059: syntax error : ')'
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\raytracer.cpp(117): warning C4573: the usage of 'RayTracer::camera_pos' requires the compiler to capture 'this' but the current default capture mode does not allow it
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\raytracer.cpp(117): error C2143: syntax error : missing ']' before 'constant'
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\raytracer.cpp(117): error C2059: syntax error : ']'
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\raytracer.cpp(117): error C2059: syntax error : ')'
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\raytracer.cpp(117): error C2059: syntax error : 'constant'
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\raytracer.cpp(119): error C2059: syntax error : ')'
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\raytracer.cpp(121): warning C4573: the usage of 'RayTracer::all_rays' requires the compiler to capture 'this' but the current default capture mode does not allow it
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\raytracer.cpp(121): error C3493: 'r' cannot be implicitly captured because no default capture mode has been specified
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\raytracer.cpp(133): warning C4573: the usage of 'RayTracer::m_models' requires the compiler to capture 'this' but the current default capture mode does not allow it
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\raytracer.cpp(135): warning C4573: the usage of 'RayTracer::closest_intersect' requires the compiler to capture 'this' but the current default capture mode does not allow it
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\raytracer.cpp(139): warning C4573: the usage of 'RayTracer::intersect' requires the compiler to capture 'this' but the current default capture mode does not allow it
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\raytracer.cpp(149): error C3487: 'std::pair<model *,triangle *>': all return expressions in a lambda must have the same type: previously it was 'Ray'
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\raytracer.cpp(156): error C3493: 'm' cannot be implicitly captured because no default capture mode has been specified
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\raytracer.cpp(156): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\raytracer.cpp(159): warning C4573: the usage of 'RayTracer::intersect' requires the compiler to capture 'this' but the current default capture mode does not allow it
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\raytracer.cpp(161): error C3487: 'triangle *': all return expressions in a lambda must have the same type: previously it was 'Ray'
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\raytracer.cpp(164): error C3487: 'int': all return expressions in a lambda must have the same type: previously it was 'Ray'
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\raytracer.cpp(173): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\raytracer.cpp(176): warning C4573: the usage of 'RayTracer::intersect' requires the compiler to capture 'this' but the current default capture mode does not allow it
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\raytracer.cpp(187): error C3487: 'triangle *': all return expressions in a lambda must have the same type: previously it was 'Ray'
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\raytracer.cpp(202): error C3493: 'tri' cannot be implicitly captured because no default capture mode has been specified
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\raytracer.cpp(213): error C3487: 'bool': all return expressions in a lambda must have the same type: previously it was 'Ray'
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\raytracer.cpp(220): error C3487: 'bool': all return expressions in a lambda must have the same type: previously it was 'Ray'
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\raytracer.cpp(226): error C3487: 'bool': all return expressions in a lambda must have the same type: previously it was 'Ray'
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\raytracer.cpp(234): error C3493: 'x' cannot be implicitly captured because no default capture mode has been specified
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\raytracer.cpp(235): warning C4573: the usage of 'RayTracer::intersection_points' requires the compiler to capture 'this' but the current default capture mode does not allow it
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\raytracer.cpp(236): error C3487: 'bool': all return expressions in a lambda must have the same type: previously it was 'Ray'
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\raytracer.cpp(241): error C3487: 'bool': all return expressions in a lambda must have the same type: previously it was 'Ray'
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\raytracer.cpp(304): error C3487: 'mathtool::Vector3d': all return expressions in a lambda must have the same type: previously it was 'Ray'
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\raytracer.cpp(313): error C3487: 'bool': all return expressions in a lambda must have the same type: previously it was 'Ray'
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\raytracer.cpp(319): error C3493: 'filename' cannot be implicitly captured because no default capture mode has been specified
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\raytracer.cpp(321): warning C4573: the usage of 'RayTracer::m_img' requires the compiler to capture 'this' but the current default capture mode does not allow it
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\raytracer.cpp(322): error C3487: 'bool': all return expressions in a lambda must have the same type: previously it was 'Ray'
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\raytracer.cpp(324): warning C4573: the usage of 'RayTracer::m_img' requires the compiler to capture 'this' but the current default capture mode does not allow it
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\raytracer.cpp(330): warning C4573: the usage of 'RayTracer::m_img' requires the compiler to capture 'this' but the current default capture mode does not allow it
+         ModelNode.cpp
+         ModelGraph.cpp
+         ModelEdge.cpp
+         model.cpp
+         Quaternion.cpp
+         Basic.cpp
+         main.cpp
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\draw.h(195): warning C4244: '=' : conversion from 'double' to 'GLfloat', possible loss of data
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\draw.h(196): warning C4244: '=' : conversion from 'double' to 'GLfloat', possible loss of data
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\draw.h(197): warning C4244: '=' : conversion from 'double' to 'GLfloat', possible loss of data
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\main.cpp(54): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\main.cpp(55): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\main.cpp(80): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>c:\users\brandon\documents\visual studio 2013\projects\cs451pa6_repo\cs451-pa6\main.cpp(81): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+         gli.cpp
+         Generating Code...
+     1>Done Building Project "C:\Users\Brandon\Documents\Visual Studio 2013\Projects\CS451PA6_Repo\cs451-PA6\vcfiles\raytracing.vcxproj" (Build target(s)) -- FAILED.
+
+Build FAILED.
+
+Time Elapsed 00:00:23.91

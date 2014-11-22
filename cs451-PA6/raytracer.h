@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GL/gli.h"
+#include "GL/gliLight.h"
 #include "model.h"
 #include <list>
 
