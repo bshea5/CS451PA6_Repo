@@ -7,8 +7,8 @@ inline double clamp(double x){ return x<0 ? 0 : x>1 ? 1 : x; }
 
 inline int toInt(double x){ return int( clamp(x)*255 + .5); }
 
-//global variable vector, i hate myself
-// std::vector<Vector3d> lines;
+//global variable vector, :(
+Point3d current_P;
 
 //constructor
 RayTracer::RayTracer(list<model>& models) : m_models(models)
@@ -82,7 +82,7 @@ Ray RayTracer::create_a_random_ray(unsigned int x, unsigned int y)
 	GLdouble pixelWidth = viewport[2] / m_img.front().size();
 	GLdouble pixelHeight = viewport[3] / m_img.size(); 
 	GLdouble winX = x + (GLdouble)(rand() % 10) / 10.0; //get random decimal value [0,1] for offset
-	GLdouble winY = y + (GLdouble)(rand() % 10) / 10.0;
+	GLdouble winY = (viewport[3] - y) + (GLdouble)(rand() % 10) / 10.0;
 	winX *= pixelWidth;
 	winY *= pixelHeight;
 
@@ -231,6 +231,7 @@ bool RayTracer::intersect(model& m, triangle* tri, Ray r, Point3d& x)
 	if (t > 0.00001) // ray intersection
 	{	
 		x = r.o + (r.v * t);	//get point of intersection
+		current_P = x;
 		intersection_points.push_back(x);
 		return(true);
 	}
@@ -249,11 +250,12 @@ Vector3d RayTracer::raycolor(model& m, triangle* tri, const Ray& r)
 	Vector3d a, b, c;			//triangle points
 	Vector3d v0, v1, v2;
 	Vector3d nx, na, nb, nc;	//normal directions
-	Vector3d light_position, light_direction;
-	Vector3d ambient, diffuse, specular; //lights
+	Vector3d al, dl, sl; 		//ambient, diffuse, and specular lights
+	Vector3d diffuse, ambient, specular;
+	Vector3d light_position, light_direction, light_reflected;
 	double u, v, w; 			//Barycentric coords
 	double nDotL;				//dot product light direction and normal
-	double shade;
+	int specular_exp = 3;
 
 	//triangle points in vector form
 	a = Vector3d(m.vertices[tri->v[0]].p[0],m.vertices[tri->v[0]].p[1],m.vertices[tri->v[0]].p[2]);
@@ -276,7 +278,7 @@ Vector3d RayTracer::raycolor(model& m, triangle* tri, const Ray& r)
 	//(1) get normal direction at intersection
 	v0 = b - a; 
 	v1 = c - a; 
-	v2 = r.o - a;
+	v2 = current_P - a;
     double d00 = v0 * v0;
     double d01 = v0 * v1;
     double d11 = v1 * v1;
@@ -292,42 +294,67 @@ Vector3d RayTracer::raycolor(model& m, triangle* tri, const Ray& r)
     //get normal direction of point using Barycentric coords
     nx = v * na + w * nb + u * nc;
 
-	//(2) get the color of mode, lights will modify this value
+	//(2) get the color of model, lights will modify this value
 	color = m.mat_color;
 
     //dot product of light and normal 
+    //c
     // \  |
     //  \ | 
     //	 \|
     // -----------
-	//(3) get light position and light vals
+	//(3) get light position/direction/relflected
     light_position = Vector3d(	light0_position[0], 
      							light0_position[1], 
      							light0_position[2]	);
+	light_direction = (current_P - light_position).normalize();
+	light_reflected = 2 * (nx * light_direction) * nx - light_direction;
 
-	//light_direction = (pointB - light_position).normalized
-	shade = light_direction * nx;
-	if (shade < 0)
-		shade = 0;
-	
-	ambient = Vector3d(	light0_ambient[0],	light0_ambient[1],	light0_ambient[2]);
-	diffuse = Vector3d(	light0_diffuse[0],	light0_diffuse[1],	light0_diffuse[2]);
-	specular = Vector3d(light0_specular[0], light0_specular[1], light0_specular[2]);
+	//get ambient, diffuse, specular lights from gliLight.h
+	al = Vector3d(	light0_ambient[0],	light0_ambient[1],	light0_ambient[2]	);
+	dl = Vector3d(	light0_diffuse[0],	light0_diffuse[1],	light0_diffuse[2]	);
+	sl = Vector3d(	light0_specular[0], light0_specular[1], light0_specular[2]	);
 
-	color = color * (ambient + diffuse * shade);
+	//set up ambient, diffuse, and specular affects on color
+	diffuse = dl * clamp(light_direction * nx);
+	ambient = al;
+	specular = sl * pow(std::max((light_reflected * light_direction), 0.0), specular_exp);
 
-	//color = color + ambient + diffuse + specular;
+	//set up color of point
+	color = color + ambient + diffuse + specular;
+
+	if (inshadow(nx))		//if in shadow, reduce the color
+	{
+		color = color / 2; //ugh >_<; magic number
+	}
 
 	return color;
-	//return m.mat_color;
 }
 
 //check if a point p is in shadow
 bool RayTracer::inshadow(const Point3d& p)
 {
 	//TODO: implement this
+	//shoot a ray back at the light to find any objects in between this point and the light
+	Ray shoot_back;				//ray to shoot back at light
+	pair<model*, triangle*> X;	//where does it intersect, <NULL, NULL> if nothing
+    Vector3d light_position;
+    light_position = Vector3d(	light0_position[0], 
+ 								light0_position[1], 
+ 								light0_position[2]	);
 
-	return false;
+    Vector3d pv = Vector3d(p[0], p[1], p[2]);	//converted point p to a vector3d
+	
+	//set up ray
+	shoot_back.o = p;
+	shoot_back.v = (light_position - pv).normalize();
+
+	//check for intersection
+	X = intersect(shoot_back);
+	if (X.first == NULL && X.second == NULL)
+		return false;	//intersects nothing, not in shadow
+
+	return true;
 }
 
 //save rendered image to file

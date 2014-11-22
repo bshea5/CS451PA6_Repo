@@ -2,6 +2,7 @@
 
 #include "GL/gli.h"
 #include "GL/gliLight.h"
+#include <algorithm>    // std::max
 #include "model.h"
 #include <list>
 
