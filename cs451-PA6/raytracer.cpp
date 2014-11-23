@@ -7,7 +7,7 @@ inline double clamp(double x){ return x<0 ? 0 : x>1 ? 1 : x; }
 
 inline int toInt(double x){ return int( clamp(x)*255 + .5); }
 
-//global variable vector, :(
+//global variable vector, :( , so dirty
 Point3d current_P;
 
 //constructor
@@ -231,7 +231,7 @@ bool RayTracer::intersect(model& m, triangle* tri, Ray r, Point3d& x)
 	if (t > 0.00001) // ray intersection
 	{	
 		x = r.o + (r.v * t);	//get point of intersection
-		current_P = x;
+		current_P = x;			//save the point of intersection for later use
 		intersection_points.push_back(x);
 		return(true);
 	}
@@ -254,7 +254,6 @@ Vector3d RayTracer::raycolor(model& m, triangle* tri, const Ray& r)
 	Vector3d diffuse, ambient, specular;
 	Vector3d light_position, light_direction, light_reflected;
 	double u, v, w; 			//Barycentric coords
-	double nDotL;				//dot product light direction and normal
 	int specular_exp = 3;
 
 	//triangle points in vector form
@@ -267,14 +266,12 @@ Vector3d RayTracer::raycolor(model& m, triangle* tri, const Ray& r)
 	nb = m.vertices[tri->v[1]].n;
 	nc = m.vertices[tri->v[2]].n;
 
-	//TODO: implement this
-
-	//
 	//hint: (1) what is the normal direction at the intersection between t and r
-	// nx = w1n1 + w2n2 + w3n3, where the w's are barycentric coords
+	// 				nx = w1n1 + w2n2 + w3n3, where the w's are barycentric coords
 	//      (2) what is the color of this triangle? 
 	//      (3) where is the light?
 	//      (4) is the intersection in shadow? (call inshadow(const Point3d& p))
+
 	//(1) get normal direction at intersection
 	v0 = b - a; 
 	v1 = c - a; 
@@ -336,24 +333,49 @@ bool RayTracer::inshadow(const Point3d& p)
 {
 	//TODO: implement this
 	//shoot a ray back at the light to find any objects in between this point and the light
-	Ray shoot_back;				//ray to shoot back at light
-	pair<model*, triangle*> X;	//where does it intersect, <NULL, NULL> if nothing
-    Vector3d light_position;
+	Ray shadow_ray;					//ray to shoot back at light
+	pair<model*, triangle*> X;		//where does it intersect, <NULL, NULL> if nothing
+    Vector3d light_position, vZero;
+    Vector3d pOld, pNew;			//intersection points
+    double magOldToL, magOldToNew;	//magnitudes
     light_position = Vector3d(	light0_position[0], 
  								light0_position[1], 
  								light0_position[2]	);
 
-    Vector3d pv = Vector3d(p[0], p[1], p[2]);	//converted point p to a vector3d
+    pOld = Vector3d(p[0], p[1], p[2]);	//converted point p to a vector3d
 	
-	//set up ray
-	shoot_back.o = p;
-	shoot_back.v = (light_position - pv).normalize();
+	//set up shadow ray
+	shadow_ray.o = p + 0.001;
+	shadow_ray.v = (light_position - pOld).normalize();
 
 	//check for intersection
-	X = intersect(shoot_back);
+	X = intersect(shadow_ray);
 	if (X.first == NULL && X.second == NULL)
+	{
+		std::cout << "Not in Shadow." << std::endl;
 		return false;	//intersects nothing, not in shadow
+	}
 
+	//just did an intersect, so the current_P is updated with the intersection point
+	//discovered shooting towards the light
+	pNew = Vector3d(current_P[0], current_P[1], current_P[2]);
+	std::cout << current_P << std::endl;
+
+	//get magnitudes
+	magOldToL = (light_position - pOld).norm();
+	magOldToNew = (pNew - pOld).norm();
+	
+	//std::cout << "OldToL: " << magOldToL << std::endl;
+	//std::cout << "OldToNew: " << magOldToNew << std::endl;
+
+	//if mag to light < mag to new, not in shadow since new point is past light
+	if (magOldToL < magOldToNew)
+	{
+		//std::cout << "Not in Shadow." << std::endl;
+		return false;
+	}
+
+	std::cout << "In Shadow" << std::endl;
 	return true;
 }
 

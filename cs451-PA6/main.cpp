@@ -62,7 +62,7 @@ int main(int argc, char **argv)
 	//
 	/////////////////////////////////////////////////////////////////
 
-	unsigned int n_ray = 30;
+	unsigned int n_ray = 1;
 	RayTracer rt(models);
 	//rt.render(image_w, image_h, n_ray);
 	rt.render(680, 680, n_ray);
