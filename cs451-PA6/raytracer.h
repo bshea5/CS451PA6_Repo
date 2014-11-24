@@ -48,7 +48,7 @@ private:
 	bool intersect(model& m, triangle * t, Ray r, Point3d& x);
 
 	//check if a point p is in shadow
-	bool inshadow(const Point3d& p);
+	bool inshadow(const Point3d& p, triangle* tri, model& m);
 
 	//
 	// determine the color of ray r, by analizing the intersection between t and r 

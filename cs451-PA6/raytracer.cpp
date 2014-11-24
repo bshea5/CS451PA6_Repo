@@ -127,8 +127,8 @@ Ray RayTracer::create_a_random_ray(unsigned int x, unsigned int y)
 pair<model*, triangle*> RayTracer::intersect(Ray r)
 {
 	double min_dist = FLT_MAX;
-	triangle * closest_T = NULL;
-	model * closest_M = NULL;
+	triangle* closest_T = NULL;
+	model* closest_M = NULL;
 
 	for (list<model>::iterator i = m_models.begin(); i != m_models.end(); i++)
 	{
@@ -143,6 +143,7 @@ pair<model*, triangle*> RayTracer::intersect(Ray r)
 				min_dist = dist;
 				closest_T = t;
 				closest_M = &*i;
+				current_P = x;
 			}
 		}
 	}
@@ -169,7 +170,7 @@ triangle* RayTracer::intersect(model& m, Ray r)
 triangle* RayTracer::closest_intersect(model& m, Ray r)
 {
 	double min_dist = FLT_MAX;
-	triangle * closest_T=NULL;
+	triangle* closest_T = NULL;
 	for (int i = 0; i < m.t_size; i++)
 	{
 		Point3d x;
@@ -231,8 +232,8 @@ bool RayTracer::intersect(model& m, triangle* tri, Ray r, Point3d& x)
 	if (t > 0.00001) // ray intersection
 	{	
 		x = r.o + (r.v * t);	//get point of intersection
-		current_P = x;			//save the point of intersection for later use
-		intersection_points.push_back(x);
+		//current_P = x;		//save the point of intersection for later use
+		//intersection_points.push_back(x);
 		return(true);
 	}
 
@@ -251,10 +252,12 @@ Vector3d RayTracer::raycolor(model& m, triangle* tri, const Ray& r)
 	Vector3d v0, v1, v2;
 	Vector3d nx, na, nb, nc;	//normal directions
 	Vector3d al, dl, sl; 		//ambient, diffuse, and specular lights
+	double shade;
 	Vector3d diffuse, ambient, specular;
-	Vector3d light_position, light_direction, light_reflected;
+	Vector3d light_direction, light_reflected;
+	Point3d light_position;
 	double u, v, w; 			//Barycentric coords
-	int specular_exp = 3;
+	int specular_exp = 2;
 
 	//triangle points in vector form
 	a = Vector3d(m.vertices[tri->v[0]].p[0],m.vertices[tri->v[0]].p[1],m.vertices[tri->v[0]].p[2]);
@@ -289,7 +292,7 @@ Vector3d RayTracer::raycolor(model& m, triangle* tri, const Ray& r)
     u = 1.0f - v - w;
 
     //get normal direction of point using Barycentric coords
-    nx = v * na + w * nb + u * nc;
+    nx = u * na + v * nb + w * nc;
 
 	//(2) get the color of model, lights will modify this value
 	color = m.mat_color;
@@ -301,10 +304,10 @@ Vector3d RayTracer::raycolor(model& m, triangle* tri, const Ray& r)
     //	 \|
     // -----------
 	//(3) get light position/direction/relflected
-    light_position = Vector3d(	light0_position[0], 
+    light_position = Point3d(	light0_position[0], 
      							light0_position[1], 
      							light0_position[2]	);
-	light_direction = (current_P - light_position).normalize();
+	light_direction = (light_position - current_P).normalize();
 	light_reflected = 2 * (nx * light_direction) * nx - light_direction;
 
 	//get ambient, diffuse, specular lights from gliLight.h
@@ -313,70 +316,56 @@ Vector3d RayTracer::raycolor(model& m, triangle* tri, const Ray& r)
 	sl = Vector3d(	light0_specular[0], light0_specular[1], light0_specular[2]	);
 
 	//set up ambient, diffuse, and specular affects on color
-	diffuse = dl * clamp(light_direction * nx);
+	shade = clamp(light_direction * nx);
+	diffuse = dl * shade;
 	ambient = al;
 	specular = sl * pow(std::max((light_reflected * light_direction), 0.0), specular_exp);
 
 	//set up color of point
-	color = color + ambient + diffuse + specular;
+	//color = color + ambient + diffuse + specular;
+	color = color * shade;
 
-	if (inshadow(nx))		//if in shadow, reduce the color
-	{
-		color = color / 2; //ugh >_<; magic number
-	}
+	//if (inshadow(nx, tri, m))		//if in shadow, reduce the color
+	//{
+	//	color = color / 2; //ugh >_<; magic number
+	//}
 
 	return color;
 }
 
 //check if a point p is in shadow
-bool RayTracer::inshadow(const Point3d& p)
+bool RayTracer::inshadow(const Point3d& p, triangle* tri, model& m)
 {
 	//TODO: implement this
-	//shoot a ray back at the light to find any objects in between this point and the light
+	//shoot a ray from light to the point, if it intersects with a model, inShadow is true
 	Ray shadow_ray;					//ray to shoot back at light
-	pair<model*, triangle*> X;		//where does it intersect, <NULL, NULL> if nothing
-    Vector3d light_position, vZero;
-    Vector3d pOld, pNew;			//intersection points
-    double magOldToL, magOldToNew;	//magnitudes
-    light_position = Vector3d(	light0_position[0], 
+	pair<model*, triangle*> X;		//holds model the ray intersects with, <NULL, NULL> if nothing
+	Point3d light_position;
+
+	//get light position as a point3d
+    light_position = Point3d(	light0_position[0], 
  								light0_position[1], 
  								light0_position[2]	);
 
-    pOld = Vector3d(p[0], p[1], p[2]);	//converted point p to a vector3d
-	
 	//set up shadow ray
-	shadow_ray.o = p + 0.001;
-	shadow_ray.v = (light_position - pOld).normalize();
+	shadow_ray.o = light_position;
+	shadow_ray.v = (p - light_position).normalize();
 
-	//check for intersection
+	//does shadow ray intersect with any models?
+	//?? Change this! only needs to do shadows on ground and walls
 	X = intersect(shadow_ray);
-	if (X.first == NULL && X.second == NULL)
+	if (X.first != NULL && X.second != NULL)
 	{
-		std::cout << "Not in Shadow." << std::endl;
-		return false;	//intersects nothing, not in shadow
+		if (X.first == &m && X.second == tri)
+		{
+			//std::cout << "balls " << std::endl;
+			return false;
+		}
+		else 
+			return true;
 	}
-
-	//just did an intersect, so the current_P is updated with the intersection point
-	//discovered shooting towards the light
-	pNew = Vector3d(current_P[0], current_P[1], current_P[2]);
-	std::cout << current_P << std::endl;
-
-	//get magnitudes
-	magOldToL = (light_position - pOld).norm();
-	magOldToNew = (pNew - pOld).norm();
-	
-	//std::cout << "OldToL: " << magOldToL << std::endl;
-	//std::cout << "OldToNew: " << magOldToNew << std::endl;
-
-	//if mag to light < mag to new, not in shadow since new point is past light
-	if (magOldToL < magOldToNew)
-	{
-		//std::cout << "Not in Shadow." << std::endl;
-		return false;
-	}
-
-	std::cout << "In Shadow" << std::endl;
-	return true;
+	//std::cout << "testies" << std::endl;
+	return false;
 }
 
 //save rendered image to file
