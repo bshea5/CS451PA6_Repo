@@ -232,8 +232,6 @@ bool RayTracer::intersect(model& m, triangle* tri, Ray r, Point3d& x)
 	if (t > 0.00001) // ray intersection
 	{	
 		x = r.o + (r.v * t);	//get point of intersection
-		//current_P = x;		//save the point of intersection for later use
-		//intersection_points.push_back(x);
 		return(true);
 	}
 
@@ -252,12 +250,12 @@ Vector3d RayTracer::raycolor(model& m, triangle* tri, const Ray& r)
 	Vector3d v0, v1, v2;
 	Vector3d nx, na, nb, nc;	//normal directions
 	Vector3d al, dl, sl; 		//ambient, diffuse, and specular lights
+	double ac, dc, sc;			//coefficients
 	double shade;
 	Vector3d diffuse, ambient, specular;
 	Vector3d light_direction, light_reflected;
 	Point3d light_position;
 	double u, v, w; 			//Barycentric coords
-	int specular_exp = 2;
 
 	//triangle points in vector form
 	a = Vector3d(m.vertices[tri->v[0]].p[0],m.vertices[tri->v[0]].p[1],m.vertices[tri->v[0]].p[2]);
@@ -311,36 +309,42 @@ Vector3d RayTracer::raycolor(model& m, triangle* tri, const Ray& r)
 	light_reflected = 2 * (nx * light_direction) * nx - light_direction;
 
 	//get ambient, diffuse, specular lights from gliLight.h
-	al = Vector3d(	light0_ambient[0],	light0_ambient[1],	light0_ambient[2]	);
-	dl = Vector3d(	light0_diffuse[0],	light0_diffuse[1],	light0_diffuse[2]	);
-	sl = Vector3d(	light0_specular[0], light0_specular[1], light0_specular[2]	);
+	// al = Vector3d(	light0_ambient[0],	light0_ambient[1],	light0_ambient[2]	);
+	// dl = Vector3d(	light0_diffuse[0],	light0_diffuse[1],	light0_diffuse[2]	);
+	// sl = Vector3d(	light0_specular[0], light0_specular[1], light0_specular[2]	);
 
 	//set up ambient, diffuse, and specular affects on color
-	shade = clamp(light_direction * nx);
-	diffuse = dl * shade;
-	ambient = al;
-	specular = sl * pow(std::max((light_reflected * light_direction), 0.0), specular_exp);
+	//using their calculated coefficients, color, and material
+	dc = clamp(light_direction * nx);
+	diffuse = dc * color;
+
+	ac = 0.255; 
+	ambient = color * ac;	
+
+	sc = pow(std::max((light_reflected * light_direction), 0.0), m.mat_shininess);
+	specular = sc * m.mat_specular;
+
+	if (inshadow(nx))		//if in shadow, reduce the color
+	{
+		color = color / 2; //ugh >_<; magic number
+		return color;
+	}
 
 	//set up color of point
-	//color = color + ambient + diffuse + specular;
-	color = color * shade;
-
-	//if (inshadow(nx, tri, m))		//if in shadow, reduce the color
-	//{
-	//	color = color / 2; //ugh >_<; magic number
-	//}
+	color = ambient + diffuse + specular;
 
 	return color;
 }
 
 //check if a point p is in shadow
-bool RayTracer::inshadow(const Point3d& p, triangle* tri, model& m)
+bool RayTracer::inshadow(const Point3d& p)
 {
 	//TODO: implement this
 	//shoot a ray from light to the point, if it intersects with a model, inShadow is true
 	Ray shadow_ray;					//ray to shoot back at light
 	pair<model*, triangle*> X;		//holds model the ray intersects with, <NULL, NULL> if nothing
 	Point3d light_position;
+	double dist_to_light, dist_to_x;
 
 	//get light position as a point3d
     light_position = Point3d(	light0_position[0], 
@@ -348,24 +352,26 @@ bool RayTracer::inshadow(const Point3d& p, triangle* tri, model& m)
  								light0_position[2]	);
 
 	//set up shadow ray
-	shadow_ray.o = light_position;
-	shadow_ray.v = (p - light_position).normalize();
+	shadow_ray.v = (light_position - current_P).normalize();
+	shadow_ray.o = current_P + shadow_ray.v * 0.001;
 
-	//does shadow ray intersect with any models?
-	//?? Change this! only needs to do shadows on ground and walls
+	dist_to_light = (light_position - current_P).norm();
+
+	//std::cout << "before: " << current_P << "\nafter: " << current_P << std::endl;
+	//loop through all models, for each model, intersect(model, ray)
 	X = intersect(shadow_ray);
 	if (X.first != NULL && X.second != NULL)
 	{
-		if (X.first == &m && X.second == tri)
+		//std::cout << "stuff" << std::endl;
+		dist_to_x = (current_P - shadow_ray.o).norm();
+		if (dist_to_x < dist_to_light)
 		{
-			//std::cout << "balls " << std::endl;
-			return false;
-		}
-		else 
+			//std::cout << "shadowed" << std::endl;
 			return true;
+		}
 	}
-	//std::cout << "testies" << std::endl;
 	return false;
+
 }
 
 //save rendered image to file
