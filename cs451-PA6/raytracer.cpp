@@ -118,7 +118,7 @@ Ray RayTracer::create_a_random_ray(unsigned int x, unsigned int y)
 					camera_pos[1] + n[1], 
 					camera_pos[2] + n[2]	);
 
-	all_rays.push_back(r);
+	//all_rays.push_back(r);
 	return r;
 }
 
@@ -324,14 +324,16 @@ Vector3d RayTracer::raycolor(model& m, triangle* tri, const Ray& r)
 	sc = pow(std::max((light_reflected * light_direction), 0.0), m.mat_shininess);
 	specular = sc * m.mat_specular;
 
-	if (inshadow(nx))		//if in shadow, reduce the color
-	{
-		color = color / 2; //ugh >_<; magic number
-		return color;
-	}
-
 	//set up color of point
 	color = ambient + diffuse + specular;
+
+	if (inshadow(nx))		//if in shadow, reduce the color
+	{
+		color = color / 3; //ugh >_<; magic number
+		//return color;
+	}
+
+
 
 	return color;
 }

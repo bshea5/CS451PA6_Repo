@@ -27,6 +27,6 @@
 # no empty lines below please
 
 model 3 # four models are defined in this RT file
-models/elephant.obj  ty=-10 ry=3.14 scale=1.25 cg=1 cr=0 cb=0.5 
-models/sphere.obj   cr=0.5 cg=0; cb=0.5 tx=-15
-models/sphere.obj   cr=0.5 cg=0; cb=0.5 tx=15
+models/elephant.obj  ty=0 ry=3.14 scale=1.25 cg=1 cr=0 cb=0.5 
+models/sphere.obj   ty=10 cr=0.5 cg=0; cb=0.5 tx=-15
+models/sphere.obj   ty=10 cr=0.5 cg=0; cb=0.5 tx=15
