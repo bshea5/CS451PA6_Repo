@@ -161,6 +161,7 @@ struct model : public object3D
     triangle * tris;      //triangles
     edge     * edges;     //edges
     uint v_size, e_size, t_size;
+	Vector3d position;	  //position, using to get light position
 
     //current orientation
     double   current_rot[3][3];

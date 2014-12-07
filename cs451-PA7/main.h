@@ -308,6 +308,7 @@ inline bool createModel(istream& in)
 	m->mat_specular = mat_specular;
 	m->mat_emission = mat_emission;
 	m->mat_shininess = mat_shininess;
+	m->position = m_pos;	// need this position for lights
 
 	models.push_back(m);
 
