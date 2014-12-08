@@ -333,8 +333,6 @@ Vector3d RayTracer::raycolor(model& m, triangle* tri, const Ray& r)
 		//return color;
 	}
 
-
-
 	return color;
 }
 

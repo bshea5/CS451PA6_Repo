@@ -359,6 +359,9 @@ Vector3d RayTracer::raycolor(const Ray& r, int depth)
 Vector3d RayTracer::raycolor(sphere& s, const Ray& r, int depth)
 {
 	Vector3d color, srNorm, light_pos, light_dir, vIntersect;
+	//Vector3d al, dl, sl; 					//ambient, diffuse, and specular lights
+	//Vector3d diffuse, ambient, specular;	//
+	//double ac, dc, sc;						//coefficients
 	double shadow;
 
 	//PA7 TODO: determine the direct color
@@ -375,10 +378,10 @@ Vector3d RayTracer::raycolor(sphere& s, const Ray& r, int depth)
 
 	color = s.mat_color;
 	color = color % ((model*)m_lights.front())->mat_emission;
-	color = color * max(srNorm * light_dir, 0.0);
+	color = color * max(srNorm * light_dir, 0.0);	//diffuse
 	shadow = inshadow(current_P);
 	color = color * shadow;
-	if (shadow == 1) return color;	//entirely in shadow, don't need to calculate more
+	if (shadow == 0) return color;	//entirely in shadow, don't need to calculate more
 
 	Vector3d reflection_color;
 	if (s.reflectiveness.normsqr() > 0)
@@ -536,7 +539,7 @@ double RayTracer::inshadow(const Point3d& p)
 	//
 	//       in this file N is SHADOW_SAMPLE_SIZE (defined above)
 	//
-	int n = 0; // number of rays that get to the light
+	double n = 0; // number of rays that get to the light
 	double shadow;	// n / number of rays
 	for (unsigned int i = 0; i < SHADOW_SAMPLE_SIZE; i++)
 	{
@@ -560,20 +563,26 @@ double RayTracer::inshadow(const Point3d& p)
 
 		X = intersect(sample_ray);
 		//if (X.first != NULL && X.second != NULL)
-		if (X.first == m_lights.front()) // does it intersect the light first
+		if (X.first == m_lights.front()) // since the light is an 'model'
 		{
-			Vector3d vIntersect = Vector3d(current_P[0], current_P[1], current_P[2]);
-			dist_to_light = (light_pos - vIntersect).norm();
-			dist_to_x = (current_P - sample_ray.o).norm();
-			if (dist_to_x < dist_to_light) { n++; } // this sample is shadowed!
+			//Vector3d vIntersect = Vector3d(current_P[0], current_P[1], current_P[2]);
+			//dist_to_light = (light_pos - vIntersect).norm();
+			//dist_to_x = (current_P - sample_ray.o).norm();
+			//if (dist_to_x < dist_to_light) { n++; } 
+			n++;	
 		}
 		// else not shadowed, don't increment n
 	} // end for, check to see what n is now. 
-	
+	n = SHADOW_SAMPLE_SIZE - n;
 	shadow = n / SHADOW_SAMPLE_SIZE;
-	if (shadow == 0.0) return 1.0;
-	else if (shadow == 1.0) return 0.0;
-	else return 1 - shadow;
+	
+	if (shadow == 0.0) return 1.0;			// 1.0 is not in shadow
+	else if (shadow == 1.0) return 0.0;		// 0.0 is entirely in shadow
+	else
+	{
+		std::cout << "shadow: " << shadow << std::endl;
+		return 1 - shadow;					// partially in shadow
+	}
 	// used returned shadow as color * shadow
 }
 
