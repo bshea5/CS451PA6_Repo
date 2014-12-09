@@ -69,13 +69,17 @@
 # "n"       : number of rays per pixel (default is 10)
 
 image 1
-n=1 width=400 height=400 
+n=100 width=680 height=680 
 
 model 3 
 models/box.obj  ty=-10 ry=3.14 scale=1.25 cg=1 cr=0 cb=0.5 
 models/box.obj  tx=20 ty=62 ry=3.14 scale=1.25 cg=1 cr=0 cb=0.5 
 models/light.obj  ty=60 er=1.0 eg=1.0 eb=1.0 scale=10
 
-sphere 2 #one transparent ball and one mirror-like ball
-cr=1.0 cg=1.0; cb=1.0 tx=-15 r=10 RI=1.8 Tr=1.0 Tg=1.0 Tb=1.0
+sphere 6 
+cr=1.0 cg=1.0; cb=1.0 tx=-15 tz=-20 r=10 RI=1.8 Tr=1.0 Tg=1.0 Tb=1.0
+cr=1.0 cg=1.0; cb=1.0 tx=-15 tz=25 r=10 RI=1.5 Tr=1.0 Tg=1.0 Tb=1.0
 cr=1.0 cg=1.0; cb=1.0 tx=15 r=10 Rr=1.0 Rg=1.0 Rb=1.0
+cr=1.0 cg=1.0; cb=1.0 tx=8 ty=30 r=10 Rb=1.0
+cr=0.5 cg=1.0; cb=1.0 tx=-15 ty=40 tz=-20 r=5 RI=1.8 Tr=1.0 Tg=1.0 Tb=1.0 sb=1.0
+cr=1.0 cg=0.5; cb=0.2 tx=20 ty=10 tz=75 r=10 Rr=1.0 

@@ -359,9 +359,6 @@ Vector3d RayTracer::raycolor(const Ray& r, int depth)
 Vector3d RayTracer::raycolor(sphere& s, const Ray& r, int depth)
 {
 	Vector3d color, srNorm, light_pos, light_dir, vIntersect;
-	//Vector3d al, dl, sl; 					//ambient, diffuse, and specular lights
-	//Vector3d diffuse, ambient, specular;	//
-	//double ac, dc, sc;						//coefficients
 	double shadow;
 
 	//PA7 TODO: determine the direct color
@@ -370,18 +367,15 @@ Vector3d RayTracer::raycolor(sphere& s, const Ray& r, int depth)
 	//      (2) what is the color of this sphere? 
 	//      (3) where is the light?
 	//      (4) is the intersection in shadow? (call inshadow(const Point3d& p))
-	srNorm = Vector3d(s.center - current_P).normalize();
+	srNorm = Vector3d(current_P - s.center).normalize();
 	
 	light_pos = ((model*)m_lights.front())->position;
 	vIntersect = Vector3d(current_P[0], current_P[1], current_P[2]);
-	light_dir = light_pos - vIntersect;
+	light_dir = (light_pos - vIntersect).normalize();
 
 	color = s.mat_color;
-	color = color % ((model*)m_lights.front())->mat_emission;
+	color = color ^ ((model*)m_lights.front())->mat_emission;
 	color = color * max(srNorm * light_dir, 0.0);	//diffuse
-	shadow = inshadow(current_P);
-	color = color * shadow;
-	if (shadow == 0) return color;	//entirely in shadow, don't need to calculate more
 
 	Vector3d reflection_color;
 	if (s.reflectiveness.normsqr() > 0)
@@ -393,9 +387,9 @@ Vector3d RayTracer::raycolor(sphere& s, const Ray& r, int depth)
 		//(1)
 		Ray reflect_ray;
 		reflect_ray.o = current_P + (srNorm * 0.001);	//origin is point of intersection plus some to be off shape
-		reflect_ray.v = r.v - 2.0 * (r.v * srNorm) * srNorm;
+		reflect_ray.v = r.v - (srNorm * ((r.v * srNorm) * 2.0));	// damn ordering!
 		//(2)
-		reflection_color = raycolor(reflect_ray, depth + 1);	//recursive function
+		reflection_color = raycolor(reflect_ray, depth + 1);	// recursive function
 	}
 
 	Vector3d refraction_color;
@@ -406,39 +400,39 @@ Vector3d RayTracer::raycolor(sphere& s, const Ray& r, int depth)
 		//      (1) generate refraction ray 
 		//      (2) determine the color of the ray (remember of increase depth by 1)
 		Ray refract_ray;
-		Vector3d light_dir, cos_theta, cos_gamma;
 		double index_ratio;	// n1 / n2
-
 		//(1)
-		light_dir = light_pos - vIntersect;		// get vector from light to intersection
-		index_ratio = 1 / s.refractive_index;	// n1 is one to represent air
-		
-		cos_theta = srNorm * (-light_dir);		// get cosine of theta between light_dir and normal of intersect
-		
-		//get sine of gamma 
-		cos_gamma = (-(index_ratio * index_ratio) * (-(cos_theta * cos_theta) + 1) + 1);
-		cos_gamma[0] = sqrt(cos_gamma[0]);
-		cos_gamma[1] = sqrt(cos_gamma[1]);
-		cos_gamma[2] = sqrt(cos_gamma[2]);
-
-		//refract ray
-		refract_ray.v = index_ratio * light_dir +
-			(index_ratio * cos_theta - cos_gamma) * srNorm;
+		double vnDot = r.v * srNorm;
+		if (vnDot < 0.0) // going into sphere
+		{
+			index_ratio = 1.0 / s.refractive_index;	// 1.0 is assumed to represent air
+		}
+		else			// leaving sphere
+		{
+			index_ratio = s.refractive_index / 1.0;
+		}
+		refract_ray.v = (index_ratio * (srNorm * (-r.v)) 
+						- sqrt(1 - pow(index_ratio, 2) * (1 - pow(srNorm * (-r.v), 2))) 
+						) * srNorm - index_ratio * (-r.v);
+		refract_ray.v = refract_ray.v.normalize();
 		refract_ray.o = current_P + (refract_ray.v * 0.001);
 
 		//(2)
 		refraction_color = raycolor(refract_ray, depth + 1);
 	}
 
+	//put inshadow down here because intersection() would update current_P
+	// shadow = inshadow(current_P);
+	// color = color * shadow;
+	// if (shadow != 1) return color;	//entirely in shadow, don't need to calculate more
+
 	//finally gather all the colors
 	for (int i = 0; i < 3; i++)
 	{
 		color[i] = clamp(color[i] + s.reflectiveness[i] * reflection_color[i] + s.transparency[i] * refraction_color[i]);
 	}
-
 	return color;
 }
-
 
 //
 // determine the color of ray r, by analizing the intersection between t and r 
@@ -455,6 +449,12 @@ Vector3d RayTracer::raycolor(model& m, triangle* tri, const Ray& r, int depth)
 	double ac, dc, sc;			//coefficients
 	double u, v, w; 			//Barycentric coords
 	double d00, d01, d11, d20, d21, denom;
+	double shadow;
+
+	if (m.mat_emission.normsqr() != 0.0)	
+	{
+		return m.mat_emission;
+	}
 
 	//triangle points in vector form
 	a = Vector3d(m.vertices[tri->v[0]].p[0],m.vertices[tri->v[0]].p[1],m.vertices[tri->v[0]].p[2]);
@@ -501,6 +501,10 @@ Vector3d RayTracer::raycolor(model& m, triangle* tri, const Ray& r, int depth)
 	light_direction = (light_position - current_P).normalize();
 	light_reflected = 2 * (nx * light_direction) * nx - light_direction;
 
+	shadow = inshadow(current_P);
+	color = color * shadow;
+	if (shadow != 1) return color;	//entirely in shadow, don't need to calculate more
+
 	//set up ambient, diffuse, and specular affects on color
 	//using their calculated coefficients, color, and material
 	dc = clamp(light_direction * nx);
@@ -514,12 +518,6 @@ Vector3d RayTracer::raycolor(model& m, triangle* tri, const Ray& r, int depth)
 
 	//set up color of point
 	color = ambient + diffuse + specular;
-
-	//if (inshadow(nx))		//if in shadow, reduce the color
-	//{
-	//	color = color / 3; //ugh >_<; magic number
-	//}
-	color * inshadow(nx);
 	return color;
 }
 
@@ -530,7 +528,7 @@ Vector3d RayTracer::raycolor(model& m, triangle* tri, const Ray& r, int depth)
 double RayTracer::inshadow(const Point3d& p)
 {
 	//
-	// PA7 TODO: implement this
+	// PA7 DONE: implement this
 	//           note: this is different from your PA6
 	//
 	// hint: sample N rays to the light (using m_lights)
@@ -539,51 +537,44 @@ double RayTracer::inshadow(const Point3d& p)
 	//
 	//       in this file N is SHADOW_SAMPLE_SIZE (defined above)
 	//
-	double n = 0; // number of rays that get to the light
-	double shadow;	// n / number of rays
+	Vector3d vIntersect;				// need this variable since intersect updates current_P
+	Vector3d light_pos;
+	model* light;
+	double n = 0.0; 					// number of rays that get to the light
+	double shadow;						// n / number of rays
+	double light_size;
+
+	vIntersect = Vector3d(current_P[0], current_P[1], current_P[2]);	// point we are checking
+
+	light = ((model*)m_lights.front());
+	light_pos = light->position;		// center of the light
+
 	for (unsigned int i = 0; i < SHADOW_SAMPLE_SIZE; i++)
 	{
 		Ray sample_ray;
+		Vector3d target;				// shoot ray at this point in the light
 		pair<object3D*, triangle* > X;	// X marks the spot of intersection
-		Vector3d light_pos;
-		double dist_to_light, dist_to_x;
-		double theta, x, s;
+		double x, z;					// used for offset from light position
+
+		// generate random x,z offsets
+		x = rand_double(-10, 10);	// need to change to (-size / 2)
+		z = rand_double(-10, 10);
 		
-		light_pos = ((model*)m_lights.front())->position;
+		// generate rays to offset points in light
+		target = light_pos;	// set to light's center position, than
+		target[0] += x;		// adjust target position to a point within the light
+		target[2] += z;		//
+		sample_ray.v = (target - vIntersect).normalize();
+		sample_ray.o = vIntersect + (sample_ray.v * 0.001);
 
-		theta = rand_double(0.0, 2.0 * PI);
-		x = rand_double(0.0, 2.0) - 1.0;
-		s = sqrt(1.0 - x * x);
-
-		//generate sample ray
-		sample_ray.v[0] = x;
-		sample_ray.v[1] = s * cos(theta);
-		sample_ray.v[2] = s * sin(theta);
-		sample_ray.o = current_P + (sample_ray.v * 0.001);
-
+		// check if first intersection is with a light
 		X = intersect(sample_ray);
-		//if (X.first != NULL && X.second != NULL)
-		if (X.first == m_lights.front()) // since the light is an 'model'
-		{
-			//Vector3d vIntersect = Vector3d(current_P[0], current_P[1], current_P[2]);
-			//dist_to_light = (light_pos - vIntersect).norm();
-			//dist_to_x = (current_P - sample_ray.o).norm();
-			//if (dist_to_x < dist_to_light) { n++; } 
-			n++;	
-		}
-		// else not shadowed, don't increment n
+		if (X.first != NULL)
+		if (X.first->mat_emission.normsqr() != 0.0) 
+			n++;	// hit the light
 	} // end for, check to see what n is now. 
-	n = SHADOW_SAMPLE_SIZE - n;
-	shadow = n / SHADOW_SAMPLE_SIZE;
-	
-	if (shadow == 0.0) return 1.0;			// 1.0 is not in shadow
-	else if (shadow == 1.0) return 0.0;		// 0.0 is entirely in shadow
-	else
-	{
-		std::cout << "shadow: " << shadow << std::endl;
-		return 1 - shadow;					// partially in shadow
-	}
-	// used returned shadow as color * shadow
+	shadow = n / SHADOW_SAMPLE_SIZE;	
+	return shadow;
 }
 
 //save rendered image to file

@@ -72,9 +72,9 @@ image 1
 n=1 width=400 height=400 
 
 model 2 
-#models/elephant.obj  ty=-10 ry=3.14 scale=1.25 cg=1 cr=0 cb=0.5 
+models/box.obj  ty=-10 ry=3.14 scale=1.25 cg=1 cr=0 cb=0.5 
 models/light.obj  ty=60 er=1.0 eg=1.0 eb=1.0 scale=10
 
 sphere 2 #one transparent ball and one mirror-like ball
-cr=0.5 cg=0; cb=0.5 tx=-15 r=10 RI=1.5 Tr=0.5 Tg=0.5 Tg=0.5
-cr=0.5 cg=0; cb=0.5 tx=15 r=10 Rr=0.5 Rg=0.5 Rg=0.5 
+cr=0.5 cg=0; cb=0.5 tx=-15 r=10 RI=1.5 Tr=0.5 Tb=0.5 Tg=0.5
+cr=0.5 cg=0; cb=0.5 tx=15 r=10 Rr=0.5 Rb=0.5 Rg=0.5 
